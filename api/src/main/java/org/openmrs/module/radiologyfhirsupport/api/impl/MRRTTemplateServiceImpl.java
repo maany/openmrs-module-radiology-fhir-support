@@ -73,6 +73,6 @@ public class MRRTTemplateServiceImpl extends BaseOpenmrsService implements MRRTT
     @Override
     @Transactional
     public MRRTTemplate delete(MRRTTemplate template) {
-        return dao.delete(MRRTTemplate);
+        return dao.delete(template);
     }
 }

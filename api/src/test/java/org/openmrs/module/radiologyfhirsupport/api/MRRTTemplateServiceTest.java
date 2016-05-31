@@ -16,7 +16,12 @@ package org.openmrs.module.radiologyfhirsupport.api;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.radiologyfhirsupport.MRRTTemplate;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
+
+import javax.sql.rowset.serial.SerialClob;
+import java.sql.Clob;
+import java.sql.SQLException;
 
 /**
  * Tests {@link ${MRRTTemplateService}}.
@@ -26,5 +31,27 @@ public class MRRTTemplateServiceTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void shouldSetupContext() {
 		assertNotNull(Context.getService(MRRTTemplateService.class));
+	}
+	@Test
+	public void shouldGetMRRTTemplateById(){
+		MRRTTemplateService mrrtTemplateService = getService();
+
+	}
+	@Test
+	public void shouldSaveMRRTTemplate(){
+		MRRTTemplateService mrrtTemplateService = getService();
+		MRRTTemplate template = new MRRTTemplate();
+		Clob xmlData=null;
+		try {
+			xmlData = new SerialClob("<html><head><title>hello</title></head><body></body></html>".toCharArray());
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		template.setXml(xmlData);
+		int id = mrrtTemplateService.saveOrUpdate(template);
+		assertNotNull(id);
+	}
+	MRRTTemplateService getService(){
+		return Context.getService(MRRTTemplateService.class);
 	}
 }

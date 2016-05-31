@@ -24,16 +24,16 @@
 	<bean parent="serviceContext">
 		<property name="moduleService">
 			<list>
-				<value>${project.parent.groupId}.${project.parent.artifactId}.api.MRRTFHIRServiceService</value>
+				<value>${project.parent.groupId}.${project.parent.artifactId}.api.MRRTTemplateService</value>
 				<bean
 					class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 					<property name="transactionManager">
 						<ref bean="transactionManager" />
 					</property>
 					<property name="target">
-						<bean class="${project.parent.groupId}.${project.parent.artifactId}.api.impl.MRRTFHIRServiceServiceImpl">
+						<bean class="${project.parent.groupId}.${project.parent.artifactId}.api.impl.MRRTTemplateServiceImpl">
 							<property name="dao">
-								<bean class="${project.parent.groupId}.${project.parent.artifactId}.api.db.hibernate.HibernateMRRTFHIRServiceDAO">
+								<bean class="${project.parent.groupId}.${project.parent.artifactId}.api.db.hibernate.HibernateMRRTTemplateDAO">
 									<property name="sessionFactory">
 										<ref bean="sessionFactory" />
 									</property>
