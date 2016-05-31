@@ -21,13 +21,13 @@ import org.springframework.transaction.annotation.Transactional;
  * <p>
  * It can be accessed only via Context:<br>
  * <code>
- * Context.getService(MRRTFHIRServiceService.class).someMethod();
+ * Context.getService(MRRTTemplateService.class).someMethod();
  * </code>
  * 
  * @see org.openmrs.api.context.Context
  */
 @Transactional
-public interface MRRTFHIRServiceService extends OpenmrsService {
+public interface MRRTTemplateService extends OpenmrsService {
      
 	/*
 	 * Add service methods here

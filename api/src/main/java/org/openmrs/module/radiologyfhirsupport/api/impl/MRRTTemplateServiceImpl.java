@@ -16,13 +16,13 @@ package org.openmrs.module.radiologyfhirsupport.api.impl;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openmrs.module.radiologyfhirsupport.api.MRRTFHIRServiceService;
+import org.openmrs.module.radiologyfhirsupport.api.MRRTTemplateService;
 import org.openmrs.module.radiologyfhirsupport.api.db.MRRTTemplateDAO;
 
 /**
- * It is a default implementation of {@link MRRTFHIRServiceService}.
+ * It is a default implementation of {@link MRRTTemplateService}.
  */
-public class MRRTFHIRServiceServiceImpl extends BaseOpenmrsService implements MRRTFHIRServiceService {
+public class MRRTTemplateServiceImpl extends BaseOpenmrsService implements MRRTTemplateService {
 	
 	protected final Log log = LogFactory.getLog(this.getClass());
 	

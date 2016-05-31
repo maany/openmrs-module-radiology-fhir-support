@@ -19,12 +19,12 @@ import org.openmrs.api.context.Context;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 
 /**
- * Tests {@link ${MRRTFHIRServiceService}}.
+ * Tests {@link ${MRRTTemplateService}}.
  */
-public class  MRRTFHIRServiceServiceTest extends BaseModuleContextSensitiveTest {
+public class MRRTTemplateServiceTest extends BaseModuleContextSensitiveTest {
 	
 	@Test
 	public void shouldSetupContext() {
-		assertNotNull(Context.getService(MRRTFHIRServiceService.class));
+		assertNotNull(Context.getService(MRRTTemplateService.class));
 	}
 }

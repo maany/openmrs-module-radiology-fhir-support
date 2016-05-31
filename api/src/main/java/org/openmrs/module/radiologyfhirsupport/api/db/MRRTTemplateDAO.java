@@ -14,12 +14,12 @@
 package org.openmrs.module.radiologyfhirsupport.api.db;
 
 import org.openmrs.module.radiologyfhirsupport.MRRTTemplate;
-import org.openmrs.module.radiologyfhirsupport.api.MRRTFHIRServiceService;
+import org.openmrs.module.radiologyfhirsupport.api.MRRTTemplateService;
 
 import java.util.List;
 
 /**
- *  Database methods for {@link MRRTFHIRServiceService}.
+ *  Database methods for {@link MRRTTemplateService}.
  */
 public interface MRRTTemplateDAO {
 	
@@ -52,11 +52,11 @@ public interface MRRTTemplateDAO {
      *
      * @param id
      */
-    public boolean deleteById(Integer id);
+    public void deleteById(Integer id);
 
     /**
      *
      * @param template
      */
-    public boolean delete(MRRTTemplate template);
+    public void delete(MRRTTemplate template);
 }

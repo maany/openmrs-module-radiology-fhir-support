@@ -16,7 +16,10 @@ package org.openmrs.module.radiologyfhirsupport.api.db.hibernate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.SessionFactory;
+import org.openmrs.module.radiologyfhirsupport.MRRTTemplate;
 import org.openmrs.module.radiologyfhirsupport.api.db.MRRTTemplateDAO;
+
+import java.util.List;
 
 /**
  * It is a default implementation of  {@link MRRTTemplateDAO}.
@@ -39,4 +42,37 @@ public class HibernateMRRTTemplateDAO implements MRRTTemplateDAO {
     public SessionFactory getSessionFactory() {
 	    return sessionFactory;
     }
+
+	@Override
+	public MRRTTemplate getById(int id) {
+		return (MRRTTemplate) sessionFactory.getCurrentSession().get(MRRTTemplate.class, id);
+	}
+	//TODO implement this method
+	@Override
+	public MRRTTemplate getByUUID(String uuid) {
+		return null;
+	}
+
+	@Override
+	public List<MRRTTemplate> getAll() {
+		return (List<MRRTTemplate>)sessionFactory.getCurrentSession().createCriteria(MRRTTemplate.class);
+	}
+
+	@Override
+	public int saveOrUpdate(MRRTTemplate template) {
+		sessionFactory.getCurrentSession().saveOrUpdate(template);
+		return template.getId();
+	}
+
+	@Override
+	public void deleteById(Integer id) {
+		MRRTTemplate template = getById(id);
+		delete(template);
+	}
+
+	@Override
+	public void delete(MRRTTemplate template) {
+		boolean flag = false;
+		sessionFactory.getCurrentSession().delete(template);
+	}
 }
