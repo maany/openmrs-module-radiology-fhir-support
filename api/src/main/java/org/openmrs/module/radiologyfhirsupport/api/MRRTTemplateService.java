@@ -14,7 +14,10 @@
 package org.openmrs.module.radiologyfhirsupport.api;
 
 import org.openmrs.api.OpenmrsService;
+import org.openmrs.module.radiologyfhirsupport.MRRTTemplate;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * This service exposes module's core functionality. It is a Spring managed bean which is configured in moduleApplicationContext.xml.
@@ -28,9 +31,48 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Transactional
 public interface MRRTTemplateService extends OpenmrsService {
-     
-	/*
-	 * Add service methods here
-	 * 
-	 */
+
+    /**
+     *
+     * @param id
+     * @return
+     */
+    MRRTTemplate getById(int id);
+
+    /**
+     *
+     * @return
+     */
+    /**
+     *
+     * @return
+     */
+    List<MRRTTemplate> getAll();
+
+    /**
+     *
+     * @param template
+     * @return
+     */
+    int saveOrUpdate(MRRTTemplate template);
+
+    /**
+     *
+     * @param id
+     * @return
+     */
+    /**
+     *
+     * @param id
+     * @return
+     */
+    MRRTTemplate delete(int id);
+
+    /**
+     *
+     * @param template
+     * @return
+     */
+    MRRTTemplate delete(MRRTTemplate template);
+
 }

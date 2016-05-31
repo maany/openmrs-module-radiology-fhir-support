@@ -46,17 +46,23 @@ public interface MRRTTemplateDAO {
      * @param template
      */
     public List<MRRTTemplate> getAll();
+
+    /**
+     *
+     * @param template
+     * @return
+     */
     public int saveOrUpdate(MRRTTemplate template);
 
     /**
      *
      * @param id
      */
-    public void deleteById(Integer id);
+    public MRRTTemplate deleteById(Integer id);
 
     /**
      *
      * @param template
      */
-    public void delete(MRRTTemplate template);
+    public MRRTTemplate delete(MRRTTemplate template);
 }

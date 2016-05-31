@@ -16,8 +16,12 @@ package org.openmrs.module.radiologyfhirsupport.api.impl;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.module.radiologyfhirsupport.MRRTTemplate;
 import org.openmrs.module.radiologyfhirsupport.api.MRRTTemplateService;
 import org.openmrs.module.radiologyfhirsupport.api.db.MRRTTemplateDAO;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * It is a default implementation of {@link MRRTTemplateService}.
@@ -40,5 +44,35 @@ public class MRRTTemplateServiceImpl extends BaseOpenmrsService implements MRRTT
      */
     public MRRTTemplateDAO getDao() {
 	    return dao;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public MRRTTemplate getById(int id) {
+        return dao.getById(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<MRRTTemplate> getAll() {
+        return dao.getAll();
+    }
+
+    @Override
+    @Transactional()
+    public int saveOrUpdate(MRRTTemplate template) {
+        return dao.saveOrUpdate(template);
+    }
+
+    @Override
+    @Transactional
+    public MRRTTemplate delete(int id) {
+        return dao.deleteById(id);
+    }
+
+    @Override
+    @Transactional
+    public MRRTTemplate delete(MRRTTemplate template) {
+        return dao.delete(MRRTTemplate);
     }
 }

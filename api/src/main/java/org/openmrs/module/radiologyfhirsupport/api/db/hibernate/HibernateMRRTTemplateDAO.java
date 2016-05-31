@@ -65,14 +65,15 @@ public class HibernateMRRTTemplateDAO implements MRRTTemplateDAO {
 	}
 
 	@Override
-	public void deleteById(Integer id) {
+	public MRRTTemplate deleteById(Integer id) {
 		MRRTTemplate template = getById(id);
-		delete(template);
+		return delete(template);
 	}
 
 	@Override
-	public void delete(MRRTTemplate template) {
+	public MRRTTemplate delete(MRRTTemplate template) {
 		boolean flag = false;
 		sessionFactory.getCurrentSession().delete(template);
+		return template;
 	}
 }
