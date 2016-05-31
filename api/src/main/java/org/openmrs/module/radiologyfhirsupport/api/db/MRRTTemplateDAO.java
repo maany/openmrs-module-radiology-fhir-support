@@ -13,14 +13,50 @@
  */
 package org.openmrs.module.radiologyfhirsupport.api.db;
 
+import org.openmrs.module.radiologyfhirsupport.MRRTTemplate;
 import org.openmrs.module.radiologyfhirsupport.api.MRRTFHIRServiceService;
+
+import java.util.List;
 
 /**
  *  Database methods for {@link MRRTFHIRServiceService}.
  */
-public interface MRRTFHIRServiceDAO {
+public interface MRRTTemplateDAO {
 	
 	/*
 	 * Add DAO methods here
 	 */
+
+    /**
+     *
+     * @param id
+     * @return
+     */
+    public MRRTTemplate getById(int id);
+
+    /**
+     *
+     * @param uuid
+     * @return
+     */
+    public MRRTTemplate getByUUID(String uuid);
+
+    /**
+     *
+     * @param template
+     */
+    public List<MRRTTemplate> getAll();
+    public int saveOrUpdate(MRRTTemplate template);
+
+    /**
+     *
+     * @param id
+     */
+    public boolean deleteById(Integer id);
+
+    /**
+     *
+     * @param template
+     */
+    public boolean delete(MRRTTemplate template);
 }

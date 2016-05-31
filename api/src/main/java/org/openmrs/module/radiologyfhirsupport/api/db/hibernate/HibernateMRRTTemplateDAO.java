@@ -16,14 +16,14 @@ package org.openmrs.module.radiologyfhirsupport.api.db.hibernate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.SessionFactory;
-import org.openmrs.module.radiologyfhirsupport.api.db.MRRTFHIRServiceDAO;
+import org.openmrs.module.radiologyfhirsupport.api.db.MRRTTemplateDAO;
 
 /**
- * It is a default implementation of  {@link MRRTFHIRServiceDAO}.
+ * It is a default implementation of  {@link MRRTTemplateDAO}.
  */
-public class HibernateMRRTFHIRServiceDAO implements MRRTFHIRServiceDAO {
+public class HibernateMRRTTemplateDAO implements MRRTTemplateDAO {
 	protected final Log log = LogFactory.getLog(this.getClass());
-	
+
 	private SessionFactory sessionFactory;
 	
 	/**

@@ -14,17 +14,28 @@
 package org.openmrs.module.radiologyfhirsupport;
 
 import java.io.Serializable;
+import java.sql.Clob;
+
 import org.openmrs.BaseOpenmrsObject;
 import org.openmrs.BaseOpenmrsMetadata;
+
+import javax.persistence.*;
+
 
 /**
  * It is a model class. It should extend either {@link BaseOpenmrsObject} or {@link BaseOpenmrsMetadata}.
  */
+@Entity
+@Table(name = "radiology_mrrt_template")
 public class MRRTTemplate extends BaseOpenmrsObject implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
+	@Lob
+	@Column(name = "xml")
+	private Clob xml;
 	
 	@Override
 	public Integer getId() {
@@ -34,6 +45,13 @@ public class MRRTTemplate extends BaseOpenmrsObject implements Serializable {
 	@Override
 	public void setId(Integer id) {
 		this.id = id;
+	}
+	public Clob getXml() {
+		return xml;
+	}
+
+	public void setXml(Clob xml) {
+		this.xml = xml;
 	}
 	
 }

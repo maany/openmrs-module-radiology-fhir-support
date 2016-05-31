@@ -17,7 +17,7 @@ import org.openmrs.api.impl.BaseOpenmrsService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.module.radiologyfhirsupport.api.MRRTFHIRServiceService;
-import org.openmrs.module.radiologyfhirsupport.api.db.MRRTFHIRServiceDAO;
+import org.openmrs.module.radiologyfhirsupport.api.db.MRRTTemplateDAO;
 
 /**
  * It is a default implementation of {@link MRRTFHIRServiceService}.
@@ -26,19 +26,19 @@ public class MRRTFHIRServiceServiceImpl extends BaseOpenmrsService implements MR
 	
 	protected final Log log = LogFactory.getLog(this.getClass());
 	
-	private MRRTFHIRServiceDAO dao;
+	private MRRTTemplateDAO dao;
 	
 	/**
      * @param dao the dao to set
      */
-    public void setDao(MRRTFHIRServiceDAO dao) {
+    public void setDao(MRRTTemplateDAO dao) {
 	    this.dao = dao;
     }
     
     /**
      * @return the dao
      */
-    public MRRTFHIRServiceDAO getDao() {
+    public MRRTTemplateDAO getDao() {
 	    return dao;
     }
 }
