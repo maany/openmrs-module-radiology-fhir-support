@@ -1,0 +1,91 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<dataset>
+    <radiology_mrrt_template id="1" xml=""/>
+
+    <person person_id="5508" gender="F" dead="false" creator="1" date_created="2008-08-15 15:46:47.0" voided="false"
+            uuid="edc3d446-e53b-11de-8404-001e378eb67e"/>
+    <person_name person_name_id="5508" preferred="true" person_id="5508" given_name="Someone" middle_name="With"
+                 family_name="MultipleUserAccounts" creator="1" date_created="2005-01-01 00:00:00.0" voided="false"
+                 uuid="f5bbff8e-e53b-11de-8404-001e378eb67e"/>
+    <users user_id="5508" person_id="5508" system_id="508-x" username="firstaccount"
+           password="74e3ed4f9e5b955de443feabc9f12ecd291ac6a7eaa2f09a72a5c811ec618b044d7131f687c0a0465fc0c660d09fd245e410e12ffe77d78b2a0c504b40afa202"
+           salt="1c30292f0b438b49b181950f3e831c6a9f38ef1c7d559fca566e8cd6b4efb417150585d4c3345f0fb0b520fc0884ad82ea7c1a28f48c2c562106a3d110716cfc"
+           secret_question="a secret" secret_answer="an answer" creator="1" date_created="2008-08-15 15:57:09.0"
+           changed_by="1" date_changed="2008-08-18 11:51:56.0" retired="false" retire_reason=""
+           uuid="2eadf946-e53c-11de-8404-001e378eb67e"/>
+
+    <person person_id="4" gender="M" dead="false" creator="1" date_created="2005-01-01 00:00:00.0" voided="false"
+            uuid="f2b7dd73-2d01-4e2b-8ebd-12d832eac8e5"/>
+    <users user_id="4" person_id="4" system_id="3-7" username="clientDeveloper1"
+           password="74e3ed4f9e5b955de443feabc9f12ecd291ac6a7eaa2f09a72a5c811ec618b044d7131f687c0a0465fc0c660d09fd245e410e12ffe77d78b2a0c504b40afa202"
+           salt="1c30292f0b438b49b181950f3e831c6a9f38ef1c7d559fca566e8cd6b4efb417150585d4c3345f0fb0b520fc0884ad82ea7c1a28f48c2c562106a3d110716cfc"
+           secret_question="a secret" secret_answer="an answer" creator="1" date_created="2008-08-15 15:57:09.0"
+           changed_by="1" date_changed="2008-08-18 11:51:56.0" retired="false" retire_reason=""
+           uuid="11ce8b28-e132-11de-babe-001e378eb67e"/>
+
+    <oauth2_client id="1" creator="4" client_name="XYZ EHR" description="This is a web client for XYZ hospital"
+                   client_type="WEB_APPLICATION"
+                   client_identifier="uui954aAc#412" website="http://www.xyzhealthservices.com"
+                   client_secret="somesecret"
+                   voided="false" date_created="2015-08-16 15:46:47.0"
+    />
+    <oauth2_client id="2" creator="4" client_name="Spring OAuth Demo Client"
+                   description="This is a web client for testing with Spring Security OAuth"
+                   client_type="WEB_APPLICATION"
+                   client_identifier="my-trusted-client-spring-security" client_secret="somesecret"
+                   website="http://www.xyzhealthservices.com"
+                   voided="false" date_created="2015-08-16 15:46:47.0"
+    />
+    <!--TODO configure DBUnit-->
+    <!--Cannot get DBUnit to import data from ElementCollection annotated fields of Client-->
+    <!--It requires adding an IColumnFilter to configure DBUnit to allow tables with null primary keys to be created-->
+    <!--Error :-->
+    <!--Read More : https://stackoverflow.com/questions/4853047/cannot-get-dbunit-to-import-data-for-collectiontable  -->
+    <!--<oauth2_client_authorities client_id="1" granted_authorities="[B@1b07b04"/>-->
+
+    <oauth2_client_authorities id="1" client_id="1" authority="ROLE_CLIENT"/>
+    <oauth2_client_authorities id="2" client_id="2" authority="ROLE_CLIENT"/>
+
+    <oauth2_client_grant_types id="1" client_id="1" authorized_grant_type="authorization_code"/>
+    <oauth2_client_grant_types id="2" client_id="1" authorized_grant_type="implicit"/>
+    <oauth2_client_grant_types id="3" client_id="1" authorized_grant_type="client_credentials"/>
+    <oauth2_client_grant_types id="4" client_id="1" authorized_grant_type="password"/>
+    <oauth2_client_grant_types id="5" client_id="1" authorized_grant_type="refresh_token"/>
+    <oauth2_client_grant_types id="6" client_id="2" authorized_grant_type="authorization_code"/>
+    <oauth2_client_grant_types id="7" client_id="2" authorized_grant_type="implicit"/>
+    <oauth2_client_grant_types id="8" client_id="2" authorized_grant_type="client_credentials"/>
+    <oauth2_client_grant_types id="9" client_id="2" authorized_grant_type="password"/>
+    <oauth2_client_grant_types id="10" client_id="2" authorized_grant_type="refresh_token"/>
+
+    <oauth2_client_redirect_uri id="1" client_id="1" redirect_uri="http://anywhere?key=value"/>
+    <oauth2_client_redirect_uri id="2" client_id="2" redirect_uri="http://anywhere?key=value"/>
+
+    <oauth2_client_resource_ids id="1" client_id="1" resource_id="openmrs"/>
+    <oauth2_client_resource_ids id="2" client_id="2" resource_id="openmrs"/>
+
+    <oauth2_client_scopes id="1" client_id="1" scope="read"/>
+    <oauth2_client_scopes id="1" client_id="1" scope="write"/>
+    <oauth2_client_scopes id="2" client_id="2" scope="read"/>
+    <oauth2_client_scopes id="2" client_id="2" scope="write"/>
+
+
+    <!--
+
+        <oauth2_client_authorities client_id="2" granted_authorities="ROLE_CLIENT"/>
+
+        <oauth2_client_grant_types client_id="2" authorized_grant_types="authorization_code"/>
+        <oauth2_client_grant_types client_id="2" authorized_grant_types="implicit"/>
+        <oauth2_client_grant_types client_id="2" authorized_grant_types="client_credentials"/>
+        <oauth2_client_grant_types client_id="2" authorized_grant_types="password"/>
+        <oauth2_client_grant_types client_id="2" authorized_grant_types="refresh_token"/>
+
+        <oauth2_client_redirect_uri  client_id="2" registered_redirect_uris="http://anywhere?key=value"/>
+
+        <oauth2_client_resource_ids client_id="2" resource_ids="openmrs"/>
+
+        <oauth2_client_scopes client_id="2" scope="read"/>
+        <oauth2_client_scopes client_id="2" scope="write"/>
+    -->
+
+
+</dataset>

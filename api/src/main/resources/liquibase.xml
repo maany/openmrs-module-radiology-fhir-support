@@ -8,5 +8,12 @@
         See http://www.liquibase.org/manual/home#available_database_refactorings
         for a list of supported elements and attributes
     -->
-    
+<!--    <changeSet id="radfhir-201605311900" author="maany">
+        <createTable tableName="radiology_mrrt_template">
+            <column name="id" type="integer" autoIncrement="true">
+            <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name=""
+        </createTable>
+    </changeSet>-->
 </databaseChangeLog>

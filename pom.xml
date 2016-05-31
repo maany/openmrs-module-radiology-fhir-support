@@ -39,6 +39,7 @@
 	
 	<properties>
 		<openMRSVersion>1.11.4</openMRSVersion>
+		<fhirModuleVersion>0.91</fhirModuleVersion>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
@@ -66,7 +67,7 @@
 												
 				<artifactId>fhir-api</artifactId>
 																								
-				<version>1.0</version>
+				<version>${fhirModuleVersion}</version>
 												
 				<scope>compile</scope>
 				
