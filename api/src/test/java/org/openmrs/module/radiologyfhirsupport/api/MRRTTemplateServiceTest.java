@@ -14,6 +14,8 @@
 package org.openmrs.module.radiologyfhirsupport.api;
 
 import static org.junit.Assert.*;
+
+import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.radiologyfhirsupport.MRRTTemplate;
@@ -27,18 +29,27 @@ import java.sql.SQLException;
  * Tests {@link ${MRRTTemplateService}}.
  */
 public class MRRTTemplateServiceTest extends BaseModuleContextSensitiveTest {
-	
+	protected static final String MRRT_INITIAL_DATA_XML = "MRRTTemplateDemoData.xml";
+	@Before
+	public void loadTestData(){
+		try {
+			executeDataSet(MRRT_INITIAL_DATA_XML);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	@Test
 	public void shouldSetupContext() {
 		assertNotNull(Context.getService(MRRTTemplateService.class));
 	}
+
 	@Test
-	public void shouldGetMRRTTemplateById(){
+	public void getById_shouldGetMRRTTemplateById(){
 		MRRTTemplateService mrrtTemplateService = getService();
 
 	}
 	@Test
-	public void shouldSaveMRRTTemplate(){
+	public void saveOrUpdate_shouldSaveMRRTTemplate(){
 		MRRTTemplateService mrrtTemplateService = getService();
 		MRRTTemplate template = new MRRTTemplate();
 		Clob xmlData=null;
