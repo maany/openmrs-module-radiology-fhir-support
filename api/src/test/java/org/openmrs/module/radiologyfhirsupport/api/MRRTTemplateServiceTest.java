@@ -27,11 +27,14 @@ import java.io.IOException;
 import java.sql.Clob;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Tests {@link{MRRTTemplateService}}.
  */
 public class MRRTTemplateServiceTest extends BaseModuleContextSensitiveTest {
+	private static Logger logger = Logger.getLogger(MRRTTemplateServiceTest.class.getName());
 	protected static final String MRRT_INITIAL_DATA_XML = "MRRTTemplateDemoData.xml";
 	@Before
 	public void loadTestData(){
@@ -56,21 +59,30 @@ public class MRRTTemplateServiceTest extends BaseModuleContextSensitiveTest {
 		List<MRRTTemplate> templates = mrrtTemplateService.getAll();
 		assertNotNull(templates);
 		for(MRRTTemplate template: templates){
-			System.out.println("Template ID " + template.getId());
+			logger.log(Level.INFO,"Template ID {0}", new Object[]{template.getId()});
 			try {
-				System.out.println("Template XML " + mrrtTemplateService.clobToString(template.getXml()));
+				logger.log(Level.INFO,"Template XML : \n {0}", new Object[]{mrrtTemplateService.clobToString(template.getXml())});
 			} catch (SQLException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
-		System.out.println("------------------ Test Data Initialized Correctly ----------------");
+		logger.log(Level.CONFIG,"Test Data Configured Properly");
 	}
+
 	@Test
 	public void getById_shouldGetMRRTTemplateById(){
 		MRRTTemplateService mrrtTemplateService = getService();
+		MRRTTemplate template = mrrtTemplateService.getById(1);
+		assertNotNull(template);
+	}
 
+	@Test
+	public void getAll_shouldGetAllMRRTTemplates(){
+		MRRTTemplateService mrrtTemplateService = getService();
+		List<MRRTTemplate> templates = mrrtTemplateService.getAll();
+		assertNotEquals(0,templates.size());
 	}
 	@Test
 	public void saveOrUpdate_shouldSaveMRRTTemplate(){
@@ -86,6 +98,24 @@ public class MRRTTemplateServiceTest extends BaseModuleContextSensitiveTest {
 		int id = mrrtTemplateService.saveOrUpdate(template);
 		assertNotNull(id);
 	}
+
+	/**
+	 * Tests both overloaded delete implementations
+	 */
+	@Test
+	public void deleteById_shouldDeleteExistingMRRTTemplate(){
+		MRRTTemplateService mrrtTemplateService = getService();
+		List<MRRTTemplate> templates = mrrtTemplateService.getAll();
+		MRRTTemplate template = templates.get(0);
+		assertNotNull("Could not find a MRRTTemplate in the database to delete. Check demo data initialization",template);
+		int id = template.getId();
+		logger.log(Level.INFO, "Deleting MRRTTemplate with ID = {0}", new Object[]{id});
+		mrrtTemplateService.delete(id);
+		assertNull(mrrtTemplateService.getById(id));
+	}
+
+
+	/*Utility Methods for the Tests*/
 	MRRTTemplateService getService(){
 		return Context.getService(MRRTTemplateService.class);
 	}
