@@ -16,15 +16,22 @@ package org.openmrs.module.radiologyfhirsupport;
 
 import org.apache.commons.logging.Log; 
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.ModuleActivator;
+import org.openmrs.module.fhir.api.DiagnosticReportService;
+import org.openmrs.module.radiologyfhirsupport.api.handler.MRRTTemplateHandler;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 /**
  * This class contains the logic that is run every time this module is either started or stopped.
  */
+@Component
 public class RadiologyFHIRSupportActivator implements ModuleActivator {
 	
 	protected Log log = LogFactory.getLog(getClass());
-		
+	@Value("${project.parent.artifactId}.handlerName}")
+	String mrrtTemplateHandlerName;
 	/**
 	 * @see ModuleActivator#willRefreshContext()
 	 */
@@ -44,6 +51,9 @@ public class RadiologyFHIRSupportActivator implements ModuleActivator {
 	 */
 	public void willStart() {
 		log.info("Starting Radiology FHIR Support Module");
+		DiagnosticReportService diagnosticReportService = Context.getService(DiagnosticReportService.class);
+		log.info("Registering FHIR Diagnostic Report Handler for MRRT templates. Handler name is : " + mrrtTemplateHandlerName);
+		diagnosticReportService.registerHandler(mrrtTemplateHandlerName,new MRRTTemplateHandler());
 	}
 	
 	/**
