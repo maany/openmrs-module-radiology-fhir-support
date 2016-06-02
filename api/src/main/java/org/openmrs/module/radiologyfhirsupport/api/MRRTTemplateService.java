@@ -17,7 +17,12 @@ import org.openmrs.api.OpenmrsService;
 import org.openmrs.module.radiologyfhirsupport.MRRTTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
+import java.sql.Clob;
+import java.sql.SQLException;
 import java.util.List;
+
+import static java.sql.Types.CLOB;
 
 /**
  * This service exposes module's core functionality. It is a Spring managed bean which is configured in moduleApplicationContext.xml.
@@ -74,5 +79,19 @@ public interface MRRTTemplateService extends OpenmrsService {
      * @return
      */
     MRRTTemplate delete(MRRTTemplate template);
+
+    /**
+     *
+     * @param clob
+     * @return
+     */
+    String clobToString(Clob clob) throws SQLException, IOException;
+
+    /**
+     *
+     * @param xml
+     * @return
+     */
+    Clob stringToClob(String xml) throws SQLException;
 
 }

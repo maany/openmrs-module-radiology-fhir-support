@@ -21,6 +21,11 @@ import org.openmrs.module.radiologyfhirsupport.api.MRRTTemplateService;
 import org.openmrs.module.radiologyfhirsupport.api.db.MRRTTemplateDAO;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.sql.rowset.serial.SerialClob;
+import java.io.IOException;
+import java.io.Reader;
+import java.sql.Clob;
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -74,5 +79,22 @@ public class MRRTTemplateServiceImpl extends BaseOpenmrsService implements MRRTT
     @Transactional
     public MRRTTemplate delete(MRRTTemplate template) {
         return dao.delete(template);
+    }
+
+    @Override
+    public String clobToString(Clob clob) throws SQLException, IOException {
+            Reader reader = clob.getCharacterStream();
+            int c = -1;
+            StringBuilder sb = new StringBuilder();
+            while((c = reader.read()) != -1) {
+                sb.append(((char)c));
+            }
+
+            return sb.toString();
+    }
+
+    @Override
+    public Clob stringToClob(String xml) throws SQLException {
+        return new SerialClob(xml.toCharArray());
     }
 }

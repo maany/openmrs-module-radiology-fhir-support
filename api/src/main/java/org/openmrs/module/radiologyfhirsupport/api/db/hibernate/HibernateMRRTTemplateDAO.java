@@ -15,6 +15,7 @@ package org.openmrs.module.radiologyfhirsupport.api.db.hibernate;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.openmrs.module.radiologyfhirsupport.MRRTTemplate;
 import org.openmrs.module.radiologyfhirsupport.api.db.MRRTTemplateDAO;
@@ -55,7 +56,8 @@ public class HibernateMRRTTemplateDAO implements MRRTTemplateDAO {
 
 	@Override
 	public List<MRRTTemplate> getAll() {
-		return (List<MRRTTemplate>)sessionFactory.getCurrentSession().createCriteria(MRRTTemplate.class);
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(MRRTTemplate.class);
+		return criteria.list();
 	}
 
 	@Override

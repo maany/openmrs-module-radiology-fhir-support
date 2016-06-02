@@ -1,6 +1,6 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <dataset>
-    <radiology_mrrt_template id="1" uuid = "agh3d446-e53b-11de-8404-001e378eb34d" creator = "5508" date_created = "2008-08-15 15:46:47.0" voided = "false"
+    <!--<radiology_mrrt_template id="1" uuid = "agh3d446-e53b-11de-8404-001e378eb34d" creator = "5508" date_created = "2008-08-15 15:46:47.0" voided = "false"
                              xml="
                              <!DOCTYPE html>
 <html>
@@ -361,7 +361,7 @@
 
                              "/>
 
-
+-->
     <person person_id="5508" gender="F" dead="false" creator="1" date_created="2008-08-15 15:46:47.0" voided="false"
             uuid="edc3d446-e53b-11de-8404-001e378eb67e"/>
     <person_name person_name_id="5508" preferred="true" person_id="5508" given_name="Someone" middle_name="With"
