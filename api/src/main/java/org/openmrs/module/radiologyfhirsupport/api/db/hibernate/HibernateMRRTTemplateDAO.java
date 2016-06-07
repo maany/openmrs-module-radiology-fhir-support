@@ -22,6 +22,7 @@ import org.openmrs.EncounterType;
 import org.openmrs.api.APIException;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
+import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.radiologyfhirsupport.MRRTTemplate;
 import org.openmrs.module.radiologyfhirsupport.api.db.MRRTTemplateDAO;
 import org.springframework.beans.factory.annotation.Value;
@@ -45,7 +46,14 @@ public class HibernateMRRTTemplateDAO implements MRRTTemplateDAO {
 	@Value("${project.parent.artifactId}.saveEncounterTypeError}")
 	private String saveEncounterTypeError;
 	private SessionFactory sessionFactory;
-	
+
+	public HibernateMRRTTemplateDAO() {
+		MessageSourceService messageSourceService = Context.getMessageSourceService();
+		encounterType = messageSourceService.getMessage("radiologyfhirsupport.handlerName");
+		saveEncounterError = messageSourceService.getMessage("radiologyfhirsupport.saveEncounterError");
+		saveEncounterTypeError = messageSourceService.getMessage("radiologyfhirsupport.saveEncounterTypeError");
+	}
+
 	/**
      * @param sessionFactory the sessionFactory to set
      */

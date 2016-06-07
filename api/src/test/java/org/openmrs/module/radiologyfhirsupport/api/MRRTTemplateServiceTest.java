@@ -46,17 +46,7 @@ public class MRRTTemplateServiceTest extends BaseModuleContextSensitiveTest {
 		try {
 			executeDataSet(MRRT_INITIAL_DATA_XML);
 			executeDataSet(ENCOUNTER_INITIAL_DATA_XML);
-			MutableMessageSource activeMessageSource = Context.getMessageSourceService().getActiveMessageSource();
-			String message = Context.getMessageSourceService().getMessage("${project.parent.artifactId}.handlerName");
-			System.out.println("************ Message " + message);
-			Context.getMessageSourceService().addPresentation(new PresentationMessage("openmrs.title", Locale.ENGLISH,"OpenMRS","Long description"));
-			Collection<PresentationMessage> presentations = Context.getMessageSourceService().getPresentations();
-			for(PresentationMessage presentationMessage: presentations){
-				System.out.println(presentationMessage.getCode() + " : " + presentationMessage.getMessage());
-			}
-
-			System.out.println(Context.getMessageSourceService().getMessage("openmrs.title"));
-			//loadMRRTTemplates();
+			loadMRRTTemplates();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -87,7 +87,7 @@ public class RadiologyFHIRSupportActivator implements ModuleActivator {
 	 * Initialize connection with FHIR module
 	 */
 	public void activateModule(){
-
+		/* TODO FIX BUG : https://issues.jboss.org/browse/JBSEAM-4840*/
 		mrrtTemplateHandlerName = Context.getMessageSourceService().getMessage("radiologyfhirsupport.handlerName");
 		mrrtTemplateHandlerDescription = Context.getMessageSourceService().getMessage("radiologyfhirsupport.handlerDescription");
 		if(ModuleFactory.isModuleStarted("fhir")) {
