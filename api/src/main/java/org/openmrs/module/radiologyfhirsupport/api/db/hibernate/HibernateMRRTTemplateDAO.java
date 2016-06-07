@@ -57,7 +57,7 @@ public class HibernateMRRTTemplateDAO implements MRRTTemplateDAO {
 	@Override
 	public MRRTTemplate getByEncounterUUID(String encounterUUID) {
 		MRRTTemplate template = null;
-		String hql = "FROM org.openmrs.module.radiologyfhirsupport.MRRTTemplate M WHERE M.encounterUUID = :encounter_uuid";
+		String hql = "FROM org.openmrs.module.radiologyfhirsupport.MRRTTemplate M WHERE M.encounterUuid = :encounter_uuid";
 		Query query = sessionFactory.getCurrentSession().createQuery(hql);
 		query.setParameter("encounter_uuid",encounterUUID);
 		List<MRRTTemplate> list = (List<MRRTTemplate>)query.list();

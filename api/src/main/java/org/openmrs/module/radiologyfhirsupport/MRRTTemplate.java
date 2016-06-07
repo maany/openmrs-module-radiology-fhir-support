@@ -40,7 +40,7 @@ public class MRRTTemplate extends BaseOpenmrsObject implements Serializable {
 	@Column(name = "xml")
 	private Clob xml;
 	@Column(name = "encounter_uuid")
-	private String encounterUuid;
+	public String encounterUuid;
 	/*
 	* The fields below are added to support OpenMRS versions <1.11.6 where Hibernate Configuration for this class would fail because of TRUNK-4841
 	 */

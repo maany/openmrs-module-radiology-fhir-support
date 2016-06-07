@@ -121,7 +121,19 @@ public class MRRTTemplateServiceTest extends BaseModuleContextSensitiveTest {
 		mrrtTemplateService.delete(id);
 		assertNull(mrrtTemplateService.getById(id));
 	}
-
+	@Test
+	public void getByEncounterUUID_shouldGetMRRTTemplateCorrespondingToEnCounterUUID(){
+		MRRTTemplateService mrrtTemplateService = getService();
+		MRRTTemplate chestXRayTemplate = mrrtTemplateService.getByEncounterUUID(chestXRayEncounterUUID);
+		assertNotNull(chestXRayTemplate);
+		try {
+			System.out.println(mrrtTemplateService.clobToString(chestXRayTemplate.getXml()));
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
 	/*Utility Methods for the Tests*/
 	MRRTTemplateService getService(){
@@ -504,7 +516,6 @@ public class MRRTTemplateServiceTest extends BaseModuleContextSensitiveTest {
 		radiologyFHIRSupportActivator.addDefaultLocation(messageSourceService);
 		radiologyFHIRSupportActivator.addDefaultProvider(messageSourceService);
 		radiologyFHIRSupportActivator.addDemoPatient(messageSourceService);
-
 
 	}
 
