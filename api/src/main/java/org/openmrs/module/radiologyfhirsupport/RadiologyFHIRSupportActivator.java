@@ -41,8 +41,6 @@ import java.util.logging.Logger;
 public class RadiologyFHIRSupportActivator implements ModuleActivator {
 	public Logger logger = Logger.getLogger(RadiologyFHIRSupportActivator.class.getName());
 	protected Log log = LogFactory.getLog(getClass());
-	String mrrtTemplateHandlerName;
-	String mrrtTemplateHandlerDescription;
 	/**
 	 * @see ModuleActivator#willRefreshContext()
 	 */
@@ -92,8 +90,84 @@ public class RadiologyFHIRSupportActivator implements ModuleActivator {
 	public void activateModule(){
 		/* TODO FIX BUG : https://issues.jboss.org/browse/JBSEAM-4840*/
 		MessageSourceService messageSourceService = Context.getMessageSourceService();
-		mrrtTemplateHandlerName = messageSourceService.getMessage("radiologyfhirsupport.handlerName");
-		mrrtTemplateHandlerDescription = messageSourceService.getMessage("radiologyfhirsupport.handlerDescription");
+		/*Step 1 */
+		registerFHIRDiagnosticReportHandler(messageSourceService);
+		/*Step 2*/
+		registerEncounterType(messageSourceService);
+		/*Data initialization */
+		String addDefaultProvider = messageSourceService.getMessage("radiologyfhirsupport.addDefaultProvider");
+		if(addDefaultProvider.equals("true")) {
+			addDefaultProvider(messageSourceService);
+		}
+
+		String addDefaultEncounterRole = messageSourceService.getMessage("radiologyfhirsupport.addDefaultEncounterRole");
+		if(addDefaultEncounterRole.equals("true")){
+			addDefaultEncounterRole(messageSourceService);
+		}
+
+		String addDefaultLocation = messageSourceService.getMessage("radiologyfhirsupport.addDefaultLocation");
+		if(addDefaultLocation.equals("true")){
+			addDefaultLocation(messageSourceService);
+
+		}
+		String addDemoPatient = messageSourceService.getMessage("radiologyfhirsupport.addDemoPatient");
+		if(addDemoPatient.equals("true")){
+			addDemoPatient(messageSourceService);
+		}
+	}
+
+	public void addDemoPatient(MessageSourceService messageSourceService){
+		logger.log(Level.INFO,"Adding demo patient for RADFHIR module");
+		String personName = messageSourceService.getMessage("radiologyfhirsupport.personName");
+		String patientIdentifierString = messageSourceService.getMessage("radiologyfhirsupport.patientIdentifier");
+		List<Patient> patients = Context.getPatientService().getPatients(personName,patientIdentifierString, null, true);
+		if(patients==null || patients.size()<1){
+			logger.log(Level.INFO,"Creating demo patient for RADFHIR module. Name is : " + personName);
+			PatientService patientService = Context.getService(PatientService.class);
+			String personLastName = messageSourceService.getMessage("radiologyfhirsupport.personLastName");
+
+			Patient patient = new Patient();
+
+			PersonName pName = new PersonName();
+			pName.setGivenName(personName);
+			pName.setFamilyName(personLastName);
+			patient.addName(pName);
+
+			PersonAddress pAddress = new PersonAddress();
+			pAddress.setAddress1("123 My street");
+			pAddress.setAddress2("Apt 402");
+			pAddress.setCityVillage("Anywhere city");
+			pAddress.setCountry("Some Country");
+			Set<PersonAddress> pAddressList = patient.getAddresses();
+			pAddressList.add(pAddress);
+			patient.setAddresses(pAddressList);
+			patient.addAddress(pAddress);
+			// patient.removeAddress(pAddress);
+
+			patient.setBirthdate(new Date());
+			patient.setBirthdateEstimated(true);
+			patient.setGender("male");
+
+			List<PatientIdentifierType> patientIdTypes = patientService.getAllPatientIdentifierTypes();
+			PatientIdentifier patientIdentifier = new PatientIdentifier();
+			patientIdentifier.setIdentifier(patientIdentifierString);
+			patientIdentifier.setIdentifierType(patientIdTypes.get(0));
+			patientIdentifier.setLocation(new Location(1));
+			patientIdentifier.setPreferred(true);
+
+			Set<PatientIdentifier> patientIdentifiers = new LinkedHashSet<PatientIdentifier>();
+			patientIdentifiers.add(patientIdentifier);
+
+			patient.setIdentifiers(patientIdentifiers);
+
+			patientService.savePatient(patient);
+		}else {
+			logger.log(Level.INFO,"Demo patient already exists for RADFHIR module. Name : " + personName);
+		}
+
+	}
+	public void registerFHIRDiagnosticReportHandler(MessageSourceService messageSourceService){
+		String mrrtTemplateHandlerName = messageSourceService.getMessage("radiologyfhirsupport.handlerName");
 		if(ModuleFactory.isModuleStarted("fhir")) {
 			try {
 				logger.log(Level.INFO,"Registering FHIR Diagnostic Report Handler for MRRT templates. Handler name is : " + mrrtTemplateHandlerName);
@@ -111,6 +185,10 @@ public class RadiologyFHIRSupportActivator implements ModuleActivator {
 			throw new APIException("FHIR module 0.91 not started/ installed");
 		}
 
+	}
+	public void registerEncounterType(MessageSourceService messageSourceService){
+		String mrrtTemplateHandlerName = messageSourceService.getMessage("radiologyfhirsupport.handlerName");
+		String mrrtTemplateHandlerDescription = messageSourceService.getMessage("radiologyfhirsupport.handlerDescription");
 		if(Context.getEncounterService().getEncounterType(mrrtTemplateHandlerName)==null) {
 			logger.log(Level.INFO,"Registering a new EncounterType for MRRTTemplates. This will be used for lookup by FHIR module : " + mrrtTemplateHandlerDescription);
 
@@ -125,125 +203,62 @@ public class RadiologyFHIRSupportActivator implements ModuleActivator {
 			logger.log(Level.INFO,"EncounterType for MRRTTemplates was already registered. This will be used for lookup by FHIR module : " + mrrtTemplateHandlerDescription);
 		}
 
-		String addDefaultProvider = messageSourceService.getMessage("radiologyfhirsupport.addDefaultProvider");
-		if(addDefaultProvider.equals("true")) {
-			logger.log(Level.INFO,"Adding default Provider for radiology fhir module");
-			String providerIdentifier = messageSourceService.getMessage("radiologyfhirsupport.providerIdentifier");
-			String providerName = messageSourceService.getMessage("radiologyfhirsupport.providerName");
+	}
+	public void addDefaultLocation(MessageSourceService messageSourceService){
+		logger.log(Level.INFO,"Adding default location for MRRT templates");
 
-			if (Context.getProviderService().getProviderByIdentifier(providerIdentifier) == null) {
-				logger.log(Level.INFO,"Creating a new Encounter Provider Type for Radiology FHIR Support Module : " + providerIdentifier);
-
-				Provider provider = new Provider();
-				provider.setName(providerName);
-				provider.setIdentifier(providerIdentifier);
-				provider.setCreator(Context.getAuthenticatedUser());
-				provider.setDateCreated(new Date());
-				provider.setRetired(false);
-				Context.getProviderService().saveProvider(provider);
-			} else {
-				logger.log(Level.INFO,"Encounter Provider was already registered with Identifier : " + providerIdentifier);
-			}
-		}
-
-		String addDefaultEncounterRole = messageSourceService.getMessage("radiologyfhirsupport.addDefaultEncounterRole");
-		if(addDefaultEncounterRole.equals("true")){
-			logger.log(Level.INFO,"Adding default encounter role for radiology fhir module");
-			String encounterRoleName = messageSourceService.getMessage("radiologyfhirsupport.encounterRoleName");
-			String encounterRoleDescription = messageSourceService.getMessage("radiologyfhirsupport.encounterRoleDescription");
-			if (Context.getEncounterService().getEncounterRoleByName(encounterRoleName)==null){
-				logger.log(Level.INFO,"Creating default encounter role for radiologyfhirsupport module");
-				EncounterRole encounterRole = new EncounterRole();
-				encounterRole.setRetired(false);
-				encounterRole.setName(encounterRoleName);
-				encounterRole.setDateCreated(new Date());
-				encounterRole.setCreator(Context.getAuthenticatedUser());
-				encounterRole.setDescription(encounterRoleDescription);
-				Context.getEncounterService().saveEncounterRole(encounterRole);
-			} else {
-				logger.log(Level.INFO,"Default Encounter Role for radiologyfhirsupport module was already present with name : " + encounterRoleName );
-			}
-		}
-
-		String addDefaultLocation = messageSourceService.getMessage("radiologyfhirsupport.addDefaultLocation");
-		if(addDefaultLocation.equals("true")){
-			logger.log(Level.INFO,"Adding default location for MRRT templates");
-			String locationName = messageSourceService.getMessage("radiologyfhirsupport.locationName");
-			String locationDescription = messageSourceService.getMessage("radiologyfhirsupport.locationDescription");
-			String locationAddress1 = messageSourceService.getMessage("radiologyfhirsupport.locationAddress1");
-			Location location = Context.getLocationService().getLocation(locationName);
-			if(location==null){
-				logger.log(Level.INFO,"Creating demo location to be used for MRRT templates. Location Name : " + locationName);
-				location = new Location();
-				location.setName(locationName);
-				location.setDescription(locationDescription);
-				location.setAddress1(locationAddress1);
-				location.setCreator(Context.getAuthenticatedUser());
-				location.setDateCreated(new Date());
-				location.setRetired(false);
-				Context.getLocationService().saveLocation(location);
-			}else{
-				logger.log(Level.INFO,"Demo Location already exists and will be used for MRRT Templates. Location Name : " + locationName);
-			}
-
-		}
-		String addDemoPatient = messageSourceService.getMessage("radiologyfhirsupport.addDemoPatient");
-		if(addDemoPatient.equals("true")){
-			logger.log(Level.INFO,"Adding demo patient for RADFHIR module");
-			String personName = messageSourceService.getMessage("radiologyfhirsupport.personName");
-			String patientIdentifier = messageSourceService.getMessage("radiologyfhirsupport.patientIdentifier");
-			List<Patient> patients = Context.getPatientService().getPatients(personName,patientIdentifier, null, true);
-			if(patients==null || patients.size()<1){
-				logger.log(Level.INFO,"Creating demo patient for RADFHIR module. Name is : " + personName);
-				saveDemoPatient();
-			}else {
-				logger.log(Level.INFO,"Demo patient already exists for RADFHIR module. Name : " + personName);
-			}
+		String locationName = messageSourceService.getMessage("radiologyfhirsupport.locationName");
+		String locationDescription = messageSourceService.getMessage("radiologyfhirsupport.locationDescription");
+		String locationAddress1 = messageSourceService.getMessage("radiologyfhirsupport.locationAddress1");
+		Location location = Context.getLocationService().getLocation(locationName);
+		if(location==null){
+			logger.log(Level.INFO,"Creating demo location to be used for MRRT templates. Location Name : " + locationName);
+			location = new Location();
+			location.setName(locationName);
+			location.setDescription(locationDescription);
+			location.setAddress1(locationAddress1);
+			location.setCreator(Context.getAuthenticatedUser());
+			location.setDateCreated(new Date());
+			location.setRetired(false);
+			Context.getLocationService().saveLocation(location);
 		}else{
+			logger.log(Level.INFO,"Demo Location already exists and will be used for MRRT Templates. Location Name : " + locationName);
 		}
 	}
+	public void addDefaultEncounterRole(MessageSourceService messageSourceService){
+		logger.log(Level.INFO,"Adding default encounter role for radiology fhir module");
+		String encounterRoleName = messageSourceService.getMessage("radiologyfhirsupport.encounterRoleName");
+		String encounterRoleDescription = messageSourceService.getMessage("radiologyfhirsupport.encounterRoleDescription");
+		if (Context.getEncounterService().getEncounterRoleByName(encounterRoleName)==null){
+			logger.log(Level.INFO,"Creating default encounter role for radiologyfhirsupport module");
+			EncounterRole encounterRole = new EncounterRole();
+			encounterRole.setRetired(false);
+			encounterRole.setName(encounterRoleName);
+			encounterRole.setDateCreated(new Date());
+			encounterRole.setCreator(Context.getAuthenticatedUser());
+			encounterRole.setDescription(encounterRoleDescription);
+			Context.getEncounterService().saveEncounterRole(encounterRole);
+		} else {
+			logger.log(Level.INFO,"Default Encounter Role for radiologyfhirsupport module was already present with name : " + encounterRoleName );
+		}
+	}
+	public void addDefaultProvider(MessageSourceService messageSourceService){
+		logger.log(Level.INFO,"Adding default Provider for radiology fhir module");
+		String providerIdentifier = messageSourceService.getMessage("radiologyfhirsupport.providerIdentifier");
+		String providerName = messageSourceService.getMessage("radiologyfhirsupport.providerName");
 
-	public void saveDemoPatient(){
-		MessageSourceService messageSourceService = Context.getService(MessageSourceService.class);
-		PatientService patientService = Context.getService(PatientService.class);
-		String personName = messageSourceService.getMessage("radiologyfhirsupport.personName");
-		String personLastName = messageSourceService.getMessage("radiologyfhirsupport.personLastName");
-		String patientIdentifierString= messageSourceService.getMessage("radiologyfhirsupport.patientIdentifier");
+		if (Context.getProviderService().getProviderByIdentifier(providerIdentifier) == null) {
+			logger.log(Level.INFO,"Creating a new Encounter Provider Type for Radiology FHIR Support Module : " + providerIdentifier);
 
-		Patient patient = new Patient();
-
-		PersonName pName = new PersonName();
-		pName.setGivenName(personName);
-		pName.setFamilyName(personLastName);
-		patient.addName(pName);
-
-		PersonAddress pAddress = new PersonAddress();
-		pAddress.setAddress1("123 My street");
-		pAddress.setAddress2("Apt 402");
-		pAddress.setCityVillage("Anywhere city");
-		pAddress.setCountry("Some Country");
-		Set<PersonAddress> pAddressList = patient.getAddresses();
-		pAddressList.add(pAddress);
-		patient.setAddresses(pAddressList);
-		patient.addAddress(pAddress);
-		// patient.removeAddress(pAddress);
-
-		patient.setBirthdate(new Date());
-		patient.setBirthdateEstimated(true);
-		patient.setGender("male");
-
-		List<PatientIdentifierType> patientIdTypes = patientService.getAllPatientIdentifierTypes();
-		PatientIdentifier patientIdentifier = new PatientIdentifier();
-		patientIdentifier.setIdentifier(patientIdentifierString);
-		patientIdentifier.setIdentifierType(patientIdTypes.get(0));
-		patientIdentifier.setLocation(new Location(1));
-		patientIdentifier.setPreferred(true);
-
-		Set<PatientIdentifier> patientIdentifiers = new LinkedHashSet<PatientIdentifier>();
-		patientIdentifiers.add(patientIdentifier);
-
-		patient.setIdentifiers(patientIdentifiers);
-
-		patientService.savePatient(patient);
+			Provider provider = new Provider();
+			provider.setName(providerName);
+			provider.setIdentifier(providerIdentifier);
+			provider.setCreator(Context.getAuthenticatedUser());
+			provider.setDateCreated(new Date());
+			provider.setRetired(false);
+			Context.getProviderService().saveProvider(provider);
+		} else {
+			logger.log(Level.INFO,"Encounter Provider was already registered with Identifier : " + providerIdentifier);
+		}
 	}
 }

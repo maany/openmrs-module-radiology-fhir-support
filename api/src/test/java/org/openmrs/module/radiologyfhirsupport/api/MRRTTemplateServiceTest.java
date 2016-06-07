@@ -22,6 +22,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.messagesource.MutableMessageSource;
 import org.openmrs.messagesource.PresentationMessage;
 import org.openmrs.module.radiologyfhirsupport.MRRTTemplate;
+import org.openmrs.module.radiologyfhirsupport.RadiologyFHIRSupportActivator;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 
 import javax.sql.rowset.serial.SerialClob;
@@ -49,11 +50,13 @@ public class MRRTTemplateServiceTest extends BaseModuleContextSensitiveTest {
 		try {
 			executeDataSet(MRRT_INITIAL_DATA_XML);
 			executeDataSet(ENCOUNTER_INITIAL_DATA_XML);
+			loadInstallationEntries();
 			loadMRRTTemplates();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
+
 	@Test
 	public void shouldSetupContext() {
 		assertNotNull(Context.getService(MRRTTemplateService.class));
@@ -495,4 +498,9 @@ public class MRRTTemplateServiceTest extends BaseModuleContextSensitiveTest {
 		chestXRay.setXml(xml);
 		chestXRayEncounterUUID = mrrtTemplateService.create(chestXRay);
 	}
+
+	private void loadInstallationEntries() {
+		new RadiologyFHIRSupportActivator().activateModule();
+	}
+
 }
