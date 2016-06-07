@@ -16,11 +16,9 @@ package org.openmrs.module.radiologyfhirsupport.api;
 import static org.junit.Assert.*;
 
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openmrs.api.context.Context;
-import org.openmrs.messagesource.MutableMessageSource;
-import org.openmrs.messagesource.PresentationMessage;
+import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.radiologyfhirsupport.MRRTTemplate;
 import org.openmrs.module.radiologyfhirsupport.RadiologyFHIRSupportActivator;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
@@ -29,9 +27,7 @@ import javax.sql.rowset.serial.SerialClob;
 import java.io.IOException;
 import java.sql.Clob;
 import java.sql.SQLException;
-import java.util.Collection;
 import java.util.List;
-import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -500,7 +496,16 @@ public class MRRTTemplateServiceTest extends BaseModuleContextSensitiveTest {
 	}
 
 	private void loadInstallationEntries() {
-		new RadiologyFHIRSupportActivator().activateModule();
+		RadiologyFHIRSupportActivator radiologyFHIRSupportActivator = new RadiologyFHIRSupportActivator();
+		MessageSourceService messageSourceService = Context.getMessageSourceService();
+		radiologyFHIRSupportActivator.registerFHIRDiagnosticReportHandler(messageSourceService);
+		radiologyFHIRSupportActivator.registerEncounterType(messageSourceService);
+		radiologyFHIRSupportActivator.addDefaultEncounterRole(messageSourceService);
+		radiologyFHIRSupportActivator.addDefaultLocation(messageSourceService);
+		radiologyFHIRSupportActivator.addDefaultProvider(messageSourceService);
+		radiologyFHIRSupportActivator.addDemoPatient(messageSourceService);
+
+
 	}
 
 }

@@ -144,11 +144,10 @@ public class MRRTTemplateServiceImpl extends BaseOpenmrsService implements MRRTT
             throw new APIException(saveEncounterTypeError);
         encounter.setEncounterType(encounterTypeMRS);
         encounter.setDateCreated(new Date());
-        //TODO parse MRRTTemplate and populate Encounter with a Patient, Provider
         /*Set Encounter Role*/
         String useDefaultEncounterRole = messageSourceService.getMessage("radiologyfhirsupport.useDefaultEncounterRole");
         EncounterRole encounterRole = null;
-        if(useDefaultEncounterRole.equals("true")){
+        if(useDefaultEncounterRole.equals("true") || useDefaultEncounterRole.equals("radiologyfhirsupport.useDefaultEncounterRole")){
             String encounterRoleName = messageSourceService.getMessage("radiologyfhirsupport.encounterRoleName");
             encounterRole= Context.getEncounterService().getEncounterRoleByName(encounterRoleName);
         }else {
@@ -157,7 +156,7 @@ public class MRRTTemplateServiceImpl extends BaseOpenmrsService implements MRRTT
         /* Set Provider */
         Provider provider = null;
         String useDefaultProvider = Context.getMessageSourceService().getMessage("radiologyfhirsupport.useDefaultProvider");
-        if(useDefaultProvider.equals("true")) {
+        if(useDefaultProvider.equals("true") || useDefaultProvider.equals("radiologyfhirsupport.useDefaultProvider")) {
             String providerIdentifier = Context.getMessageSourceService().getMessage("radiologyfhirsupport.providerIdentifier");
             provider = Context.getProviderService().getProviderByIdentifier(providerIdentifier);
         }else {
@@ -168,7 +167,7 @@ public class MRRTTemplateServiceImpl extends BaseOpenmrsService implements MRRTT
         /* Set Location */
         Location location = null;
         String useDefaultLocation = Context.getMessageSourceService().getMessage("radiologyfhirsupport.useDefaultLocation");
-        if(useDefaultLocation.equals("true")) {
+        if(useDefaultLocation.equals("true") || useDefaultLocation.equals("radiologyfhirsupport.useDefaultLocation")) {
             String locationName = Context.getMessageSourceService().getMessage("radiologyfhirsupport.locationName");
             location = Context.getLocationService().getLocation(locationName);
         }else {
@@ -180,7 +179,7 @@ public class MRRTTemplateServiceImpl extends BaseOpenmrsService implements MRRTT
         /*Set Patient*/
         Patient patient = null;
         String useDemoPatient = Context.getMessageSourceService().getMessage("radiologyfhirsupport.useDemoPatient");
-        if(useDemoPatient.equals("true")) {
+        if(useDemoPatient.equals("true")||useDemoPatient.equals("radiologyfhirsupport.useDemoPatient")) {
             String patientIdentifier = Context.getMessageSourceService().getMessage("radiologyfhirsupport.patientIdentifier");
             String patientName = Context.getMessageSourceService().getMessage("radiologyfhirsupport.personName");
             List<Patient> patients = Context.getPatientService().getPatients(patientName,patientIdentifier, null, true);
@@ -189,6 +188,12 @@ public class MRRTTemplateServiceImpl extends BaseOpenmrsService implements MRRTT
             //TODO obtain Patient from XML here
         }
         encounter.setPatient(patient);
+
+        /*Set DateTime*/
+        //TODO parse XML and obtain date here
+        Date date = new Date();
+
+        encounter.setEncounterDatetime(date);
         return encounter;
     }
 }

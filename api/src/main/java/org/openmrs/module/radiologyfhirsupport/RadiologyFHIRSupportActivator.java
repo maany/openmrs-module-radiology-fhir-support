@@ -91,7 +91,15 @@ public class RadiologyFHIRSupportActivator implements ModuleActivator {
 		/* TODO FIX BUG : https://issues.jboss.org/browse/JBSEAM-4840*/
 		MessageSourceService messageSourceService = Context.getMessageSourceService();
 		/*Step 1 */
-		registerFHIRDiagnosticReportHandler(messageSourceService);
+		if(ModuleFactory.isModuleStarted("fhir")) {
+			try {
+				registerFHIRDiagnosticReportHandler(messageSourceService);
+			} catch (APIException ex) {
+				ex.printStackTrace();
+			}
+		} else {
+			throw new APIException("FHIR module 0.91 not started/ installed");
+		}
 		/*Step 2*/
 		registerEncounterType(messageSourceService);
 		/*Data initialization */
@@ -168,21 +176,13 @@ public class RadiologyFHIRSupportActivator implements ModuleActivator {
 	}
 	public void registerFHIRDiagnosticReportHandler(MessageSourceService messageSourceService){
 		String mrrtTemplateHandlerName = messageSourceService.getMessage("radiologyfhirsupport.handlerName");
-		if(ModuleFactory.isModuleStarted("fhir")) {
-			try {
-				logger.log(Level.INFO,"Registering FHIR Diagnostic Report Handler for MRRT templates. Handler name is : " + mrrtTemplateHandlerName);
-				DiagnosticReportService diagnosticReportService = Context.getService(DiagnosticReportService.class);
-				if(!diagnosticReportService.getHandlers().containsKey(mrrtTemplateHandlerName)) {
-					logger.log(Level.INFO,"Creating new FHIR Diagnostic Report Handler for MRRT templates");
-					diagnosticReportService.registerHandler(mrrtTemplateHandlerName, new MRRTTemplateHandler());
-				}else {
-					logger.log(Level.INFO,"FHIR Diagnostic Report Handler for MRRT templates already exists");
-				}
-			} catch (APIException ex) {
-				ex.printStackTrace();
-			}
-		} else {
-			throw new APIException("FHIR module 0.91 not started/ installed");
+		logger.log(Level.INFO,"Registering FHIR Diagnostic Report Handler for MRRT templates. Handler name is : " + mrrtTemplateHandlerName);
+		DiagnosticReportService diagnosticReportService = Context.getService(DiagnosticReportService.class);
+		if(!diagnosticReportService.getHandlers().containsKey(mrrtTemplateHandlerName)) {
+			logger.log(Level.INFO,"Creating new FHIR Diagnostic Report Handler for MRRT templates");
+			diagnosticReportService.registerHandler(mrrtTemplateHandlerName, new MRRTTemplateHandler());
+		}else {
+			logger.log(Level.INFO,"FHIR Diagnostic Report Handler for MRRT templates already exists");
 		}
 
 	}
