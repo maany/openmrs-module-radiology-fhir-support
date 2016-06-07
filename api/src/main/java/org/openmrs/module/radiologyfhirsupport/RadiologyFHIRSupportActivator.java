@@ -16,56 +16,59 @@ package org.openmrs.module.radiologyfhirsupport;
 
 import org.apache.commons.logging.Log; 
 import org.apache.commons.logging.LogFactory;
-import org.openmrs.EncounterType;
+import org.openmrs.*;
 import org.openmrs.api.APIException;
+import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
+import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.ModuleActivator;
 import org.openmrs.module.ModuleFactory;
 import org.openmrs.module.fhir.api.DiagnosticReportService;
-import org.openmrs.module.fhir.api.LocationService;
 import org.openmrs.module.radiologyfhirsupport.api.handler.MRRTTemplateHandler;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * This class contains the logic that is run every time this module is either started or stopped.
  */
 @Component
 public class RadiologyFHIRSupportActivator implements ModuleActivator {
-	
+	public Logger logger = Logger.getLogger(RadiologyFHIRSupportActivator.class.getName());
 	protected Log log = LogFactory.getLog(getClass());
-	@Value("${project.parent.artifactId}.handlerName}")
 	String mrrtTemplateHandlerName;
-	@Value("${project.parent.artifactId}.handlerDescription")
 	String mrrtTemplateHandlerDescription;
 	/**
 	 * @see ModuleActivator#willRefreshContext()
 	 */
 	public void willRefreshContext() {
-		log.info("Refreshing Radiology FHIR Support Module");
+		logger.log(Level.INFO,"Refreshing Radiology FHIR Support Module");
 	}
 	
 	/**
 	 * @see ModuleActivator#contextRefreshed()
 	 */
 	public void contextRefreshed() {
-		log.info("Radiology FHIR Support Module refreshed");
+		logger.log(Level.INFO,"Radiology FHIR Support Module refreshed");
 	}
 	
 	/**
 	 * @see ModuleActivator#willStart()
 	 */
 	public void willStart() {
-		log.info("Starting Radiology FHIR Support Module");
+		logger.log(Level.INFO,"Starting Radiology FHIR Support Module");
 	}
 	
 	/**
 	 * @see ModuleActivator#started()
 	 */
 	public void started() {
-		log.info("Radiology FHIR Support Module started");
+		logger.log(Level.INFO,"Radiology FHIR Support Module started");
 		activateModule();
 	}
 	
@@ -73,14 +76,14 @@ public class RadiologyFHIRSupportActivator implements ModuleActivator {
 	 * @see ModuleActivator#willStop()
 	 */
 	public void willStop() {
-		log.info("Stopping Radiology FHIR Support Module");
+		logger.log(Level.INFO,"Stopping Radiology FHIR Support Module");
 	}
 	
 	/**
 	 * @see ModuleActivator#stopped()
 	 */
 	public void stopped() {
-		log.info("Radiology FHIR Support Module stopped");
+		logger.log(Level.INFO,"Radiology FHIR Support Module stopped");
 	}
 
 	/**
@@ -88,14 +91,19 @@ public class RadiologyFHIRSupportActivator implements ModuleActivator {
 	 */
 	public void activateModule(){
 		/* TODO FIX BUG : https://issues.jboss.org/browse/JBSEAM-4840*/
-		mrrtTemplateHandlerName = Context.getMessageSourceService().getMessage("radiologyfhirsupport.handlerName");
-		mrrtTemplateHandlerDescription = Context.getMessageSourceService().getMessage("radiologyfhirsupport.handlerDescription");
+		MessageSourceService messageSourceService = Context.getMessageSourceService();
+		mrrtTemplateHandlerName = messageSourceService.getMessage("radiologyfhirsupport.handlerName");
+		mrrtTemplateHandlerDescription = messageSourceService.getMessage("radiologyfhirsupport.handlerDescription");
 		if(ModuleFactory.isModuleStarted("fhir")) {
 			try {
-				log.info("Registering FHIR Diagnostic Report Handler for MRRT templates. Handler name is : " + mrrtTemplateHandlerName);
-				LocationService locationService = Context.getService(LocationService.class);
+				logger.log(Level.INFO,"Registering FHIR Diagnostic Report Handler for MRRT templates. Handler name is : " + mrrtTemplateHandlerName);
 				DiagnosticReportService diagnosticReportService = Context.getService(DiagnosticReportService.class);
-				diagnosticReportService.registerHandler(mrrtTemplateHandlerName, new MRRTTemplateHandler());
+				if(!diagnosticReportService.getHandlers().containsKey(mrrtTemplateHandlerName)) {
+					logger.log(Level.INFO,"Creating new FHIR Diagnostic Report Handler for MRRT templates");
+					diagnosticReportService.registerHandler(mrrtTemplateHandlerName, new MRRTTemplateHandler());
+				}else {
+					logger.log(Level.INFO,"FHIR Diagnostic Report Handler for MRRT templates already exists");
+				}
 			} catch (APIException ex) {
 				ex.printStackTrace();
 			}
@@ -104,7 +112,7 @@ public class RadiologyFHIRSupportActivator implements ModuleActivator {
 		}
 
 		if(Context.getEncounterService().getEncounterType(mrrtTemplateHandlerName)==null) {
-			log.info("Registering a new EncounterType for MRRTTemplates. This will be used for lookup by FHIR module : " + mrrtTemplateHandlerDescription);
+			logger.log(Level.INFO,"Registering a new EncounterType for MRRTTemplates. This will be used for lookup by FHIR module : " + mrrtTemplateHandlerDescription);
 
 			EncounterType mrrtFhirEncounterType = new EncounterType();
 			mrrtFhirEncounterType.setName(mrrtTemplateHandlerName);
@@ -114,8 +122,128 @@ public class RadiologyFHIRSupportActivator implements ModuleActivator {
 			mrrtFhirEncounterType.setRetired(false);
 			Context.getEncounterService().saveEncounterType(mrrtFhirEncounterType);
 		} else {
-			log.info("EncounterType for MRRTTemplates was already registered. This will be used for lookup by FHIR module : " + mrrtTemplateHandlerDescription);
+			logger.log(Level.INFO,"EncounterType for MRRTTemplates was already registered. This will be used for lookup by FHIR module : " + mrrtTemplateHandlerDescription);
+		}
+
+		String addDefaultProvider = messageSourceService.getMessage("radiologyfhirsupport.addDefaultProvider");
+		if(addDefaultProvider.equals("true")) {
+			logger.log(Level.INFO,"Adding default Provider for radiology fhir module");
+			String providerIdentifier = messageSourceService.getMessage("radiologyfhirsupport.providerIdentifier");
+			String providerName = messageSourceService.getMessage("radiologyfhirsupport.providerName");
+
+			if (Context.getProviderService().getProviderByIdentifier(providerIdentifier) == null) {
+				logger.log(Level.INFO,"Creating a new Encounter Provider Type for Radiology FHIR Support Module : " + providerIdentifier);
+
+				Provider provider = new Provider();
+				provider.setName(providerName);
+				provider.setIdentifier(providerIdentifier);
+				provider.setCreator(Context.getAuthenticatedUser());
+				provider.setDateCreated(new Date());
+				provider.setRetired(false);
+				Context.getProviderService().saveProvider(provider);
+			} else {
+				logger.log(Level.INFO,"Encounter Provider was already registered with Identifier : " + providerIdentifier);
+			}
+		}
+
+		String addDefaultEncounterRole = messageSourceService.getMessage("radiologyfhirsupport.addDefaultEncounterRole");
+		if(addDefaultEncounterRole.equals("true")){
+			logger.log(Level.INFO,"Adding default encounter role for radiology fhir module");
+			String encounterRoleName = messageSourceService.getMessage("radiologyfhirsupport.encounterRoleName");
+			String encounterRoleDescription = messageSourceService.getMessage("radiologyfhirsupport.encounterRoleDescription");
+			if (Context.getEncounterService().getEncounterRoleByName(encounterRoleName)==null){
+				logger.log(Level.INFO,"Creating default encounter role for radiologyfhirsupport module");
+				EncounterRole encounterRole = new EncounterRole();
+				encounterRole.setRetired(false);
+				encounterRole.setName(encounterRoleName);
+				encounterRole.setDateCreated(new Date());
+				encounterRole.setCreator(Context.getAuthenticatedUser());
+				encounterRole.setDescription(encounterRoleDescription);
+				Context.getEncounterService().saveEncounterRole(encounterRole);
+			} else {
+				logger.log(Level.INFO,"Default Encounter Role for radiologyfhirsupport module was already present with name : " + encounterRoleName );
+			}
+		}
+
+		String addDefaultLocation = messageSourceService.getMessage("radiologyfhirsupport.addDefaultLocation");
+		if(addDefaultLocation.equals("true")){
+			logger.log(Level.INFO,"Adding default location for MRRT templates");
+			String locationName = messageSourceService.getMessage("radiologyfhirsupport.locationName");
+			String locationDescription = messageSourceService.getMessage("radiologyfhirsupport.locationDescription");
+			String locationAddress1 = messageSourceService.getMessage("radiologyfhirsupport.locationAddress1");
+			Location location = Context.getLocationService().getLocation(locationName);
+			if(location==null){
+				logger.log(Level.INFO,"Creating demo location to be used for MRRT templates. Location Name : " + locationName);
+				location = new Location();
+				location.setName(locationName);
+				location.setDescription(locationDescription);
+				location.setAddress1(locationAddress1);
+				location.setCreator(Context.getAuthenticatedUser());
+				location.setDateCreated(new Date());
+				location.setRetired(false);
+				Context.getLocationService().saveLocation(location);
+			}else{
+				logger.log(Level.INFO,"Demo Location already exists and will be used for MRRT Templates. Location Name : " + locationName);
+			}
+
+		}
+		String addDemoPatient = messageSourceService.getMessage("radiologyfhirsupport.addDemoPatient");
+		if(addDemoPatient.equals("true")){
+			logger.log(Level.INFO,"Adding demo patient for RADFHIR module");
+			String personName = messageSourceService.getMessage("radiologyfhirsupport.personName");
+			String patientIdentifier = messageSourceService.getMessage("radiologyfhirsupport.patientIdentifier");
+			List<Patient> patients = Context.getPatientService().getPatients(personName,patientIdentifier, null, true);
+			if(patients==null || patients.size()<1){
+				logger.log(Level.INFO,"Creating demo patient for RADFHIR module. Name is : " + personName);
+				saveDemoPatient();
+			}else {
+				logger.log(Level.INFO,"Demo patient already exists for RADFHIR module. Name : " + personName);
+			}
+		}else{
 		}
 	}
-		
+
+	public void saveDemoPatient(){
+		MessageSourceService messageSourceService = Context.getService(MessageSourceService.class);
+		PatientService patientService = Context.getService(PatientService.class);
+		String personName = messageSourceService.getMessage("radiologyfhirsupport.personName");
+		String personLastName = messageSourceService.getMessage("radiologyfhirsupport.personLastName");
+		String patientIdentifierString= messageSourceService.getMessage("radiologyfhirsupport.patientIdentifier");
+
+		Patient patient = new Patient();
+
+		PersonName pName = new PersonName();
+		pName.setGivenName(personName);
+		pName.setFamilyName(personLastName);
+		patient.addName(pName);
+
+		PersonAddress pAddress = new PersonAddress();
+		pAddress.setAddress1("123 My street");
+		pAddress.setAddress2("Apt 402");
+		pAddress.setCityVillage("Anywhere city");
+		pAddress.setCountry("Some Country");
+		Set<PersonAddress> pAddressList = patient.getAddresses();
+		pAddressList.add(pAddress);
+		patient.setAddresses(pAddressList);
+		patient.addAddress(pAddress);
+		// patient.removeAddress(pAddress);
+
+		patient.setBirthdate(new Date());
+		patient.setBirthdateEstimated(true);
+		patient.setGender("male");
+
+		List<PatientIdentifierType> patientIdTypes = patientService.getAllPatientIdentifierTypes();
+		PatientIdentifier patientIdentifier = new PatientIdentifier();
+		patientIdentifier.setIdentifier(patientIdentifierString);
+		patientIdentifier.setIdentifierType(patientIdTypes.get(0));
+		patientIdentifier.setLocation(new Location(1));
+		patientIdentifier.setPreferred(true);
+
+		Set<PatientIdentifier> patientIdentifiers = new LinkedHashSet<PatientIdentifier>();
+		patientIdentifiers.add(patientIdentifier);
+
+		patient.setIdentifiers(patientIdentifiers);
+
+		patientService.savePatient(patient);
+	}
 }

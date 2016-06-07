@@ -13,8 +13,7 @@
  */
 package org.openmrs.module.radiologyfhirsupport.api.impl;
 
-import org.openmrs.Encounter;
-import org.openmrs.EncounterType;
+import org.openmrs.*;
 import org.openmrs.api.APIException;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
@@ -130,6 +129,7 @@ public class MRRTTemplateServiceImpl extends BaseOpenmrsService implements MRRTT
 
     /**
      * Create a new {@link Encounter} Object for the MRRTTemplate
+     * TODO parse the MRRTTemplate and populate Provider, Patient, Encounter, EncounterRole
      * @return
      * @param encounterService
      */
@@ -145,6 +145,50 @@ public class MRRTTemplateServiceImpl extends BaseOpenmrsService implements MRRTT
         encounter.setEncounterType(encounterTypeMRS);
         encounter.setDateCreated(new Date());
         //TODO parse MRRTTemplate and populate Encounter with a Patient, Provider
+        /*Set Encounter Role*/
+        String useDefaultEncounterRole = messageSourceService.getMessage("radiologyfhirsupport.useDefaultEncounterRole");
+        EncounterRole encounterRole = null;
+        if(useDefaultEncounterRole.equals("true")){
+            String encounterRoleName = messageSourceService.getMessage("radiologyfhirsupport.encounterRoleName");
+            encounterRole= Context.getEncounterService().getEncounterRoleByName(encounterRoleName);
+        }else {
+            //TODO obtain EncounterRole from XML here
+        }
+        /* Set Provider */
+        Provider provider = null;
+        String useDefaultProvider = Context.getMessageSourceService().getMessage("radiologyfhirsupport.useDefaultProvider");
+        if(useDefaultProvider.equals("true")) {
+            String providerIdentifier = Context.getMessageSourceService().getMessage("radiologyfhirsupport.providerIdentifier");
+            provider = Context.getProviderService().getProviderByIdentifier(providerIdentifier);
+        }else {
+            //TODO obtain Provider from XML here
+        }
+        encounter.setProvider(encounterRole,provider);
+
+        /* Set Location */
+        Location location = null;
+        String useDefaultLocation = Context.getMessageSourceService().getMessage("radiologyfhirsupport.useDefaultLocation");
+        if(useDefaultLocation.equals("true")) {
+            String locationName = Context.getMessageSourceService().getMessage("radiologyfhirsupport.locationName");
+            location = Context.getLocationService().getLocation(locationName);
+        }else {
+            //TODO obtain Location from XML here
+        }
+        encounter.setLocation(location);
+
+
+        /*Set Patient*/
+        Patient patient = null;
+        String useDemoPatient = Context.getMessageSourceService().getMessage("radiologyfhirsupport.useDemoPatient");
+        if(useDemoPatient.equals("true")) {
+            String patientIdentifier = Context.getMessageSourceService().getMessage("radiologyfhirsupport.patientIdentifier");
+            String patientName = Context.getMessageSourceService().getMessage("radiologyfhirsupport.personName");
+            List<Patient> patients = Context.getPatientService().getPatients(patientName,patientIdentifier, null, true);
+            patient = patients.get(0);
+        }else {
+            //TODO obtain Patient from XML here
+        }
+        encounter.setPatient(patient);
         return encounter;
     }
 }
