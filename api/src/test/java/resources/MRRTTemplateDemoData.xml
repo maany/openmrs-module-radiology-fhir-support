@@ -382,5 +382,5 @@
            secret_question="a secret" secret_answer="an answer" creator="1" date_created="2008-08-15 15:57:09.0"
            changed_by="1" date_changed="2008-08-18 11:51:56.0" retired="false" retire_reason=""
            uuid="11ce8b28-e132-11de-babe-001e378eb67e"/>
-
+    <encounter_type encounter_type_id="10" creator = "1" date_created="2008-08-18 11:51:56.0" retired="false" uuid="2eadf946-e53c-11de-8404-001e378ebngh" name="radiologyfhirsupport.handlerName" description="radiologyfhirsupport.handlerDesciption"/>
 </dataset>

@@ -56,11 +56,23 @@ public interface MRRTTemplateService extends OpenmrsService {
 
     /**
      *
+     * @param encounterUUID
+     * @return
+     */
+    MRRTTemplate getByEncounterUUID(String encounterUUID);
+    /**
+     *
      * @param template
      * @return
      */
     int saveOrUpdate(MRRTTemplate template);
 
+    /**
+     *
+     * @param template
+     * @return uuid of the {@link org.openmrs.Encounter} created
+     */
+    String create(MRRTTemplate template);
     /**
      *
      * @param id

@@ -43,6 +43,12 @@ public interface MRRTTemplateDAO {
 
     /**
      *
+     * @param encounterUUID
+     * @return
+     */
+    MRRTTemplate getByEncounterUUID(String encounterUUID);
+    /**
+     *
      * @param template
      */
     public List<MRRTTemplate> getAll();

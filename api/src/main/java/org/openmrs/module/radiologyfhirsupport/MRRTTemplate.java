@@ -28,7 +28,7 @@ import javax.persistence.*;
 /**
  * It is a model class. It should extend either {@link BaseOpenmrsObject} or {@link BaseOpenmrsMetadata}.
  */
-@Entity
+@Entity(name = "MRRTTemplate")
 @Table(name = "radiology_mrrt_template")
 public class MRRTTemplate extends BaseOpenmrsObject implements Serializable {
 

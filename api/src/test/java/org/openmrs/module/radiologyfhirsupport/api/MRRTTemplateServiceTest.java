@@ -41,8 +41,11 @@ public class MRRTTemplateServiceTest extends BaseModuleContextSensitiveTest {
 	private static Logger logger = Logger.getLogger(MRRTTemplateServiceTest.class.getName());
 	protected static final String MRRT_INITIAL_DATA_XML = "MRRTTemplateDemoData.xml";
 	protected static final String ENCOUNTER_INITIAL_DATA_XML= "org/openmrs/api/include/EncounterServiceTest-initialData.xml";
+	private String chestXRayEncounterUUID;
+	private String cardiacMRIEncounterUUID;
 	@Before
 	public void loadTestData(){
+
 		try {
 			executeDataSet(MRRT_INITIAL_DATA_XML);
 			executeDataSet(ENCOUNTER_INITIAL_DATA_XML);
@@ -367,7 +370,7 @@ public class MRRTTemplateServiceTest extends BaseModuleContextSensitiveTest {
 				"</html>";
 		Clob xml = new SerialClob(cardiacMRIString.toCharArray());
 		cardiacMRI.setXml(xml);
-		mrrtTemplateService.saveOrUpdate(cardiacMRI);
+		cardiacMRIEncounterUUID = mrrtTemplateService.create(cardiacMRI);
 
 		MRRTTemplate chestXRay = new MRRTTemplate();
 		String chestXRayString = " <!DOCTYPE html>\n" +
@@ -490,6 +493,6 @@ public class MRRTTemplateServiceTest extends BaseModuleContextSensitiveTest {
 				"</html>";
 		xml = new SerialClob(chestXRayString.toCharArray());
 		chestXRay.setXml(xml);
-		mrrtTemplateService.saveOrUpdate(chestXRay);
+		chestXRayEncounterUUID = mrrtTemplateService.create(chestXRay);
 	}
 }
