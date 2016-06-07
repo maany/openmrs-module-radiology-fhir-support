@@ -39,18 +39,20 @@ public class MRRTTemplate extends BaseOpenmrsObject implements Serializable {
 	@Lob
 	@Column(name = "xml")
 	private Clob xml;
+	@Column(name = "encounter_uuid")
+	private String encounterUuid;
 	/*
 	* The fields below are added to support OpenMRS versions <1.11.6 where Hibernate Configuration for this class would fail because of TRUNK-4841
 	 */
 
-	@ManyToOne(optional = false)
+	@ManyToOne(optional = false, fetch = FetchType.EAGER)
 	@JoinColumn(name = "creator")
 	protected User creator;
 
 	@Column(name = "date_created", nullable = false)
 	private Date dateCreated;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "changed_by")
 	private User changedBy;
 
@@ -63,12 +65,16 @@ public class MRRTTemplate extends BaseOpenmrsObject implements Serializable {
 	@Column(name = "date_voided")
 	private Date dateVoided;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "voided_by")
 	private User voidedBy;
 
 	@Column(name = "void_reason", length = 255)
 	private String voidReason;
+
+	public MRRTTemplate() {
+		super();
+	}
 
 	@Override
 	public Integer getId() {
@@ -86,6 +92,14 @@ public class MRRTTemplate extends BaseOpenmrsObject implements Serializable {
 
 	public void setXml(Clob xml) {
 		this.xml = xml;
+	}
+
+	public String getEncounterUuid() {
+		return encounterUuid;
+	}
+
+	public void setEncounterUuid(String encounterUuid) {
+		this.encounterUuid = encounterUuid;
 	}
 
 	public User getCreator() {

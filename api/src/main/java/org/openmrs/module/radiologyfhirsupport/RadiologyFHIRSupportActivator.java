@@ -17,9 +17,12 @@ package org.openmrs.module.radiologyfhirsupport;
 import org.apache.commons.logging.Log; 
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.EncounterType;
+import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.ModuleActivator;
+import org.openmrs.module.ModuleFactory;
 import org.openmrs.module.fhir.api.DiagnosticReportService;
+import org.openmrs.module.fhir.api.LocationService;
 import org.openmrs.module.radiologyfhirsupport.api.handler.MRRTTemplateHandler;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -85,15 +88,34 @@ public class RadiologyFHIRSupportActivator implements ModuleActivator {
 	 */
 	public void activateModule(){
 
-		DiagnosticReportService diagnosticReportService = Context.getService(DiagnosticReportService.class);
-		log.info("Registering FHIR Diagnostic Report Handler for MRRT templates. Handler name is : " + mrrtTemplateHandlerName);
-		diagnosticReportService.registerHandler(mrrtTemplateHandlerName,new MRRTTemplateHandler());
-		log.info("Registering a new EncounterType for MRRTTemplates. This will be used for lookup by FHIR module : " + mrrtTemplateHandlerDescription);
-		EncounterType mrrtFhirEncounterType = new EncounterType(mrrtTemplateHandlerName, mrrtTemplateHandlerDescription);
-		mrrtFhirEncounterType.setCreator(Context.getAuthenticatedUser());
-		mrrtFhirEncounterType.setDateCreated(new Date());
-		mrrtFhirEncounterType.setRetired(false);
-		Context.getEncounterService().saveEncounterType(mrrtFhirEncounterType);
+		mrrtTemplateHandlerName = Context.getMessageSourceService().getMessage("radiologyfhirsupport.handlerName");
+		mrrtTemplateHandlerDescription = Context.getMessageSourceService().getMessage("radiologyfhirsupport.handlerDescription");
+		if(ModuleFactory.isModuleStarted("fhir")) {
+			try {
+				log.info("Registering FHIR Diagnostic Report Handler for MRRT templates. Handler name is : " + mrrtTemplateHandlerName);
+				LocationService locationService = Context.getService(LocationService.class);
+				DiagnosticReportService diagnosticReportService = Context.getService(DiagnosticReportService.class);
+				diagnosticReportService.registerHandler(mrrtTemplateHandlerName, new MRRTTemplateHandler());
+			} catch (APIException ex) {
+				ex.printStackTrace();
+			}
+		} else {
+			throw new APIException("FHIR module 0.91 not started/ installed");
+		}
+
+		if(Context.getEncounterService().getEncounterType(mrrtTemplateHandlerName)==null) {
+			log.info("Registering a new EncounterType for MRRTTemplates. This will be used for lookup by FHIR module : " + mrrtTemplateHandlerDescription);
+
+			EncounterType mrrtFhirEncounterType = new EncounterType();
+			mrrtFhirEncounterType.setName(mrrtTemplateHandlerName);
+			mrrtFhirEncounterType.setDescription(mrrtTemplateHandlerDescription);
+			mrrtFhirEncounterType.setCreator(Context.getAuthenticatedUser());
+			mrrtFhirEncounterType.setDateCreated(new Date());
+			mrrtFhirEncounterType.setRetired(false);
+			Context.getEncounterService().saveEncounterType(mrrtFhirEncounterType);
+		} else {
+			log.info("EncounterType for MRRTTemplates was already registered. This will be used for lookup by FHIR module : " + mrrtTemplateHandlerDescription);
+		}
 	}
 		
 }

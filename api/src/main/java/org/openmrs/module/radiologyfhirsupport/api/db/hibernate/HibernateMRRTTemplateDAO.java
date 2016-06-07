@@ -17,17 +17,33 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
+import org.openmrs.Encounter;
+import org.openmrs.EncounterType;
+import org.openmrs.api.APIException;
+import org.openmrs.api.EncounterService;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.radiologyfhirsupport.MRRTTemplate;
 import org.openmrs.module.radiologyfhirsupport.api.db.MRRTTemplateDAO;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 /**
  * It is a default implementation of  {@link MRRTTemplateDAO}.
  */
+@PropertySource("classpath:message.properties")
 public class HibernateMRRTTemplateDAO implements MRRTTemplateDAO {
 	protected final Log log = LogFactory.getLog(this.getClass());
-
+	@Value("${project.parent.artifactId}.handlerName")
+	private String encounterType;
+	@Value("${project.parent.artifactId}.saveEncounterError")
+	private String saveEncounterError;
+	@Value("${project.parent.artifactId}.saveEncounterTypeError}")
+	private String saveEncounterTypeError;
 	private SessionFactory sessionFactory;
 	
 	/**
@@ -62,6 +78,14 @@ public class HibernateMRRTTemplateDAO implements MRRTTemplateDAO {
 
 	@Override
 	public int saveOrUpdate(MRRTTemplate template) {
+		EncounterService encounterService = Context.getEncounterService();
+		Encounter encounter = createOpenmrsEncounter(encounterService);
+		encounterService.saveEncounter(encounter);
+		/* Store encounter's uuid for lookup */
+		String encounterUuid = encounter.getUuid();
+		if(encounterUuid.length()<1)
+			throw new APIException(saveEncounterError);
+		template.setEncounterUuid(encounter.getUuid());
 		sessionFactory.getCurrentSession().saveOrUpdate(template);
 		return template.getId();
 	}
@@ -77,5 +101,24 @@ public class HibernateMRRTTemplateDAO implements MRRTTemplateDAO {
 		boolean flag = false;
 		sessionFactory.getCurrentSession().delete(template);
 		return template;
+	}
+
+	/**
+	 * Create a new {@link Encounter} Object for the MRRTTemplate
+	 * @return
+	 * @param encounterService
+     */
+	private Encounter createOpenmrsEncounter(EncounterService encounterService){
+		Encounter encounter = new Encounter();
+		System.out.println("Encounter Type is " + encounterType);
+		EncounterType encounterType = encounterService.getEncounterType(this.encounterType);
+		if(encounterType==null || encounterType.getName().length()<1)
+			throw new APIException(saveEncounterTypeError);
+		encounter.setEncounterType(encounterType);
+		return encounter;
+	}
+	@Bean
+	public static PropertySourcesPlaceholderConfigurer propertyConfigInDev() {
+		return new PropertySourcesPlaceholderConfigurer();
 	}
 }

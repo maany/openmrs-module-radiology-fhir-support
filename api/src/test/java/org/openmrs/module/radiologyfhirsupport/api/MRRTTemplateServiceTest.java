@@ -19,6 +19,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openmrs.api.context.Context;
+import org.openmrs.messagesource.MutableMessageSource;
+import org.openmrs.messagesource.PresentationMessage;
 import org.openmrs.module.radiologyfhirsupport.MRRTTemplate;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 
@@ -26,7 +28,9 @@ import javax.sql.rowset.serial.SerialClob;
 import java.io.IOException;
 import java.sql.Clob;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -36,11 +40,23 @@ import java.util.logging.Logger;
 public class MRRTTemplateServiceTest extends BaseModuleContextSensitiveTest {
 	private static Logger logger = Logger.getLogger(MRRTTemplateServiceTest.class.getName());
 	protected static final String MRRT_INITIAL_DATA_XML = "MRRTTemplateDemoData.xml";
+	protected static final String ENCOUNTER_INITIAL_DATA_XML= "org/openmrs/api/include/EncounterServiceTest-initialData.xml";
 	@Before
 	public void loadTestData(){
 		try {
 			executeDataSet(MRRT_INITIAL_DATA_XML);
-			loadMRRTTemplates();
+			executeDataSet(ENCOUNTER_INITIAL_DATA_XML);
+			MutableMessageSource activeMessageSource = Context.getMessageSourceService().getActiveMessageSource();
+			String message = Context.getMessageSourceService().getMessage("${project.parent.artifactId}.handlerName");
+			System.out.println("************ Message " + message);
+			Context.getMessageSourceService().addPresentation(new PresentationMessage("openmrs.title", Locale.ENGLISH,"OpenMRS","Long description"));
+			Collection<PresentationMessage> presentations = Context.getMessageSourceService().getPresentations();
+			for(PresentationMessage presentationMessage: presentations){
+				System.out.println(presentationMessage.getCode() + " : " + presentationMessage.getMessage());
+			}
+
+			System.out.println(Context.getMessageSourceService().getMessage("openmrs.title"));
+			//loadMRRTTemplates();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

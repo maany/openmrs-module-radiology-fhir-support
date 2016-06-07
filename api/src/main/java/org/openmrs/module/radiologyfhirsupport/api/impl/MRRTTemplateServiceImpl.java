@@ -13,6 +13,10 @@
  */
 package org.openmrs.module.radiologyfhirsupport.api.impl;
 
+import org.openmrs.Encounter;
+import org.openmrs.EncounterType;
+import org.openmrs.api.EncounterService;
+import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
