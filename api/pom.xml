@@ -74,7 +74,13 @@
 		</dependency>
 
 		<!-- End OpenMRS core -->
-		
+
+		<!--Begin XML parser-->
+		<dependency>
+			<groupId>dom4j</groupId>
+			<artifactId>dom4j</artifactId>
+		</dependency>
+		<!--End XML Parser-->
 	</dependencies>
 	
 	<build>

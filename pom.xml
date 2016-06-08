@@ -40,6 +40,7 @@
 	<properties>
 		<openMRSVersion>1.11.4</openMRSVersion>
 		<fhirModuleVersion>0.91</fhirModuleVersion>
+		<dom4jVersion>1.6.1</dom4jVersion>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
@@ -119,6 +120,13 @@
 			</dependency>
 						
 			<!-- End OpenMRS core -->
+			<!--Begin XML parser-->
+			<dependency>
+				<groupId>dom4j</groupId>
+				<artifactId>dom4j</artifactId>
+				<version>${dom4jVersion}</version>
+			</dependency>
+			<!--End XML Parser-->
 
 		</dependencies>
 	</dependencyManagement>
