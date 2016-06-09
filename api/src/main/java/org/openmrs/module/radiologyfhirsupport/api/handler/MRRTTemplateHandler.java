@@ -24,7 +24,6 @@ public class MRRTTemplateHandler extends AbstractHandler implements DiagnosticRe
 
     @Override
     public DiagnosticReport getFHIRDiagnosticReportById(String id) {
-        System.out.println("*************** REQUEST LANDED ***************");
         MRRTTemplateService mrrtTemplateService = Context.getService(MRRTTemplateService.class);
         MRRTTemplate mrrtTemplate = mrrtTemplateService.getByEncounterUUID(id);
         if(mrrtTemplate==null) {
