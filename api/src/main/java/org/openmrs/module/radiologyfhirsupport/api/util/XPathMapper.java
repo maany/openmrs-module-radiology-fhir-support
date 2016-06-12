@@ -43,10 +43,14 @@ public class XPathMapper {
             if (fhirDiagnosticReportFieldName.equals("id")) {
                 String encounterUuid = getInnerHTML(document, mrrtTemplateFieldName);
                 diagnosticReportMRRTAdapter.setId(encounterUuid);
+            }if(fhirDiagnosticReportFieldName.equals("status")){
+                
+            }if(fhirDiagnosticReportFieldName.equals("serviceCategory")){
+
             }
         }
 
-        return adapter.getDiagnosticReport;
+        return adapter.getDiagnosticReport();
     }
     private Document loadDomFromXml(String xml){
         SAXReader saxReader = new SAXReader();
