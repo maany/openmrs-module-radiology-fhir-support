@@ -9,7 +9,5 @@ import java.util.Map;
  * Created by devmaany on 8/6/16.
  */
 public interface MRRTToFHIRService {
-    void useDefaultMappings();
-    void setMapping(Map<String,String> mapping);
-    DiagnosticReport convertMRRTToFHIRDiagnosticReport(MRRTTemplate template);
+    DiagnosticReport convertMRRTToFHIRViaXPath(MRRTTemplate template, Map<String, String> xPathMapping);
 }

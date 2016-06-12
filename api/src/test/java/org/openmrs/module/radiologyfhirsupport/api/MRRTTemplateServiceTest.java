@@ -44,8 +44,8 @@ public class MRRTTemplateServiceTest extends BaseModuleContextSensitiveTest {
 	public void loadTestData(){
 
 		try {
-			executeDataSet(MRRT_INITIAL_DATA_XML);
 			executeDataSet(ENCOUNTER_INITIAL_DATA_XML);
+			executeDataSet(MRRT_INITIAL_DATA_XML);
 			loadInstallationEntries();
 			loadMRRTTemplates();
 		} catch (Exception e) {

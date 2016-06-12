@@ -2,6 +2,7 @@ package org.openmrs.module.radiologyfhirsupport.api.util;
 
 import ca.uhn.fhir.model.dstu2.composite.CodingDt;
 import ca.uhn.fhir.model.dstu2.resource.DiagnosticReport;
+import ca.uhn.fhir.model.dstu2.valueset.DiagnosticReportStatusEnum;
 import ca.uhn.fhir.model.primitive.IdDt;
 
 import java.util.ArrayList;
@@ -36,6 +37,16 @@ public class DiagnosticReportMRRTAdapter {
      * @param status
      */
     public void setStatus(String status){
+        if(status.equals("DRAFT")){
+            diagnosticReport.setStatus(DiagnosticReportStatusEnum.PARTIAL);
+        }else if(status.equals("ACTIVE")){
+            diagnosticReport.setStatus(DiagnosticReportStatusEnum.FINAL);
+        }else if(status.equals("RETIRED")){
+            diagnosticReport.setStatus(DiagnosticReportStatusEnum.CANCELLED);
+        }else{
+            diagnosticReport.setStatus(DiagnosticReportStatusEnum.ENTERED_IN_ERROR);
+        }
+
     }
 
     /**
@@ -44,6 +55,14 @@ public class DiagnosticReportMRRTAdapter {
      * @param serviceCategory
      */
     public void setServiceCategory(String serviceCategory){
+        String matchString = serviceCategory.toLowerCase();
+        if(matchString.contains("ct")){
+            serviceCategory = "CT";
+        }else if(matchString.contains("xray")){
+            serviceCategory="RAD";
+        }else {
+            serviceCategory = "RAD";
+        }
         List<CodingDt> serviceCategoryList = new ArrayList<CodingDt>();
         serviceCategoryList.add(new CodingDt("http://hl7.org/fhir/v2/0074",serviceCategory));
         diagnosticReport.getServiceCategory().setCoding(serviceCategoryList);
