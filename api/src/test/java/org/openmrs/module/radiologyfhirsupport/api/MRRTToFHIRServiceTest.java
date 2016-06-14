@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static junit.framework.Assert.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
 
 /**
@@ -81,6 +82,7 @@ public class MRRTToFHIRServiceTest extends BaseModuleContextSensitiveTest{
             System.out.println("Id : " + diagnosticReport.getId().getIdPart().toString());
             System.out.println("Status : " + diagnosticReport.getStatus());
             System.out.println("Service Category : " + diagnosticReport.getServiceCategory().getCoding().get(0).toString());
+            Assert.assertNotEquals("results were not set",0,diagnosticReport.getResult().size());
         } catch(Exception ex){
             ex.printStackTrace();
         }

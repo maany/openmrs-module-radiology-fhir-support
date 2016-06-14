@@ -11,6 +11,7 @@ import org.openmrs.module.radiologyfhirsupport.api.MRRTTemplateService;
 import org.openmrs.module.radiologyfhirsupport.api.MRRTToFHIRService;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by devmaany on 31/5/16.
@@ -31,7 +32,8 @@ public class MRRTTemplateHandler extends AbstractHandler implements DiagnosticRe
             throw new APIException(templateNotFoundError);
         }
         /*TODO get Map*/
-        DiagnosticReport diagnosticReport = Context.getService(MRRTToFHIRService.class).convertMRRTToFHIRViaXPath(mrrtTemplate, null);
+        MRRTToFHIRService mrrtToFHIRService = Context.getService(MRRTToFHIRService.class);
+        DiagnosticReport diagnosticReport = Context.getService(MRRTToFHIRService.class).convertMRRTToFHIRViaXPath(mrrtTemplate, mrrtToFHIRService.getDefaultMapping());
         return diagnosticReport;
     }
 
@@ -58,4 +60,5 @@ public class MRRTTemplateHandler extends AbstractHandler implements DiagnosticRe
         String saveDiagnosticReportError = Context.getService(MessageSourceService.class).getMessage("radiologyfhirsupport.saveDiagnosticReportError");
         throw new APIException(saveDiagnosticReportError);
     }
+
 }

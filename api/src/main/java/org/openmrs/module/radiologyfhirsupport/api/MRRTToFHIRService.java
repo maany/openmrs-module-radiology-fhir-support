@@ -10,4 +10,5 @@ import java.util.Map;
  */
 public interface MRRTToFHIRService {
     DiagnosticReport convertMRRTToFHIRViaXPath(MRRTTemplate template, Map<String, String> xPathMapping);
+    Map<String,String> getDefaultMapping();
 }

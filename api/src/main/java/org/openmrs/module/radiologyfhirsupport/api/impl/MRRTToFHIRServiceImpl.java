@@ -10,6 +10,7 @@ import org.openmrs.module.radiologyfhirsupport.api.util.XPathMapper;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -39,6 +40,17 @@ public class MRRTToFHIRServiceImpl implements MRRTToFHIRService {
 
         return diagnosticReport;
     }
+
+    @Override
+    public Map<String, String> getDefaultMapping() {
+        Map<String, String> xPathMappings = new HashMap<String, String>();
+        xPathMappings.put("//html/head/script/template_attributes/status", "status");
+        xPathMappings.put("//html/head/title", "category");
+        xPathMappings.put("RID13159", "subject");
+        xPathMappings.put("RadLex", "result");
+        return xPathMappings;
+    }
+
 
 
 }

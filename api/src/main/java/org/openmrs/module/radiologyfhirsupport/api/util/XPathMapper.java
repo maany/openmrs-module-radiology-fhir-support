@@ -3,15 +3,9 @@ package org.openmrs.module.radiologyfhirsupport.api.util;
 import ca.uhn.fhir.model.dstu2.resource.DiagnosticReport;
 import org.dom4j.*;
 import org.dom4j.io.SAXReader;
-import org.openmrs.api.APIException;
-import org.openmrs.api.context.Context;
-import org.openmrs.messagesource.MessageSourceService;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 /**
