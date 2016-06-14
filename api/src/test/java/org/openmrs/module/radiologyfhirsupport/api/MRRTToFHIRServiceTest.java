@@ -8,6 +8,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.radiologyfhirsupport.MRRTTemplate;
 import org.openmrs.module.radiologyfhirsupport.RadiologyFHIRSupportActivator;
+import org.openmrs.module.radiologyfhirsupport.api.handler.MRRTTemplateHandler;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 
 import javax.sql.rowset.serial.SerialClob;
@@ -77,7 +78,7 @@ public class MRRTToFHIRServiceTest extends BaseModuleContextSensitiveTest{
         Map<String,String> xPathMappings = getXPathMappings();
         System.out.println("" + mrrtTemplateService.getAll().size());
         try {
-            DiagnosticReport diagnosticReport = mrrtToFHIRService.convertMRRTToFHIRViaXPath(mrrtTemplateService.getAll().get(0), xPathMappings);
+            DiagnosticReport diagnosticReport = mrrtToFHIRService.convertMRRTToFHIRViaXPath(mrrtTemplateService.getAll().get(1), xPathMappings);
             assertNotNull("Diagnostic Report was null",diagnosticReport);
             System.out.println("Id : " + diagnosticReport.getId().getIdPart().toString());
             System.out.println("Status : " + diagnosticReport.getStatus());
@@ -88,7 +89,13 @@ public class MRRTToFHIRServiceTest extends BaseModuleContextSensitiveTest{
         }
 
     }
-
+    @Test
+    public void mrrtTemplateHandlerTest(){
+        MRRTTemplateHandler mrrtTemplateHandler = new MRRTTemplateHandler();
+        MRRTTemplateService mrrtTemplateService = Context.getService(MRRTTemplateService.class);
+        String encounterUuid = mrrtTemplateService.getAll().get(1).getEncounterUuid();
+        DiagnosticReport report = mrrtTemplateHandler.getFHIRDiagnosticReportById(encounterUuid);
+    }
 
     public Map<String,String> getXPathMappings() {
         Map<String,String> xPathMappings = new HashMap<String, String>();

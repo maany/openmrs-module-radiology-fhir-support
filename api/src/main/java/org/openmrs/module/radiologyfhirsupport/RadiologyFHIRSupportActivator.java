@@ -25,8 +25,11 @@ import org.openmrs.module.ModuleActivator;
 import org.openmrs.module.ModuleFactory;
 import org.openmrs.module.fhir.api.DiagnosticReportService;
 import org.openmrs.module.radiologyfhirsupport.api.handler.MRRTTemplateHandler;
+import org.openmrs.util.OpenmrsUtil;
 import org.springframework.stereotype.Component;
 
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -68,6 +71,7 @@ public class RadiologyFHIRSupportActivator implements ModuleActivator {
 	public void started() {
 		logger.log(Level.INFO,"Radiology FHIR Support Module started");
 		activateModule();
+		debugClassPath();
 	}
 	
 	/**
@@ -260,5 +264,17 @@ public class RadiologyFHIRSupportActivator implements ModuleActivator {
 		} else {
 			logger.log(Level.INFO,"Encounter Provider was already registered with Identifier : " + providerIdentifier);
 		}
+	}
+	private void debugClassPath(){
+		ClassLoader cl = ClassLoader.getSystemClassLoader();
+
+		URL[] urls = ((URLClassLoader)cl).getURLs();
+
+		for(URL url: urls){
+			System.out.println(url.getFile());
+		}
+
+		System.out.println(OpenmrsUtil.getApplicationDataDirectory());
+
 	}
 }
