@@ -2,8 +2,14 @@ package org.openmrs.module.radiologyfhirsupport.api.util;
 
 import ca.uhn.fhir.model.dstu2.composite.CodingDt;
 import ca.uhn.fhir.model.dstu2.resource.DiagnosticReport;
+import ca.uhn.fhir.model.dstu2.resource.Patient;
 import ca.uhn.fhir.model.dstu2.valueset.DiagnosticReportStatusEnum;
 import ca.uhn.fhir.model.primitive.IdDt;
+import org.dom4j.Document;
+import org.openmrs.api.APIException;
+import org.openmrs.api.PatientService;
+import org.openmrs.api.context.Context;
+import org.openmrs.module.fhir.api.util.FHIRPatientUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,10 +83,22 @@ public class DiagnosticReportMRRTAdapter {
     }
 
     /**
-     *
+     * from RadLex.xls, codes for
+     * Patient Identifier = RID13159
+     * Patient Name = RID13160
+     * If patient identifier is OpenMRS patient uuid, then mapping is successful
      */
-    public void setSubject(){
-
+    public void setSubject(Document document){
+        RadLexUtil radLexUtil = new RadLexUtil(document);
+        String patientName = radLexUtil.getBodyCodedContent("RID13160");
+        String patientIdentifier = radLexUtil.getBodyCodedContent("RID13160");
+        PatientService patientService = Context.getPatientService();
+        org.openmrs.Patient patient = patientService.getPatientByUuid(patientIdentifier);
+        if(patient==null){
+            throw new APIException("No Patient with uuid = " + patientIdentifier + " found in OpenMRS records");
+        }
+        Patient fhirPatient = FHIRPatientUtil.generatePatient(patient);
+        diagnosticReport.getSubject().setResource(fhirPatient);
     }
     public void setIssued(){
 

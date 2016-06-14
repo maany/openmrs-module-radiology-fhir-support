@@ -60,14 +60,10 @@ public class XPathMapper {
                 String serviceCategory = getInnerHTML(document,mrrtTemplateFieldName);
                 diagnosticReportMRRTAdapter.setServiceCategory(serviceCategory);
             }
-            /**
-             * from RadLex.xls, codes for
-             * Patient Identifier = RID13159
-             * Patient Name = RID13160
-             */
+
             if(fhirDiagnosticReportFieldName.equals("subject")){
                 String serviceCategory = getInnerHTML(document,mrrtTemplateFieldName);
-                diagnosticReportMRRTAdapter.setServiceCategory(serviceCategory);
+                diagnosticReportMRRTAdapter.setSubject(document);
             }
         }
 
