@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -78,9 +79,12 @@ public class RadLexUtilTest extends BaseModuleContextSensitiveTest{
         Document document = loadDOM();
         RadLexUtil radLexUtil = new RadLexUtil(document);
         assertNotNull(radLexUtil);
-        String xPath = "//html/head/script/template_attributes/term";
-        Map<String, String> radLexCodes = radLexUtil.getRadLexCodes(xPath);
+        Map<String, String> radLexCodes = radLexUtil.getRadLexCodes();
         assertNotEquals(radLexCodes.size(),0);
+        Map<String,String> codedContent = radLexUtil.getCodedContent();
+        String radLexCode = "RID10376";
+        String content = radLexUtil.getBodyCodedContent(radLexCode);
+        assertEquals("Normal.",content);
 
     }
     void loadMRRTTemplates() throws SQLException {

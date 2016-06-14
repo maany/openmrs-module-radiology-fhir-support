@@ -2,6 +2,7 @@ package org.openmrs.module.radiologyfhirsupport.api.util;
 
 import org.dom4j.Attribute;
 import org.dom4j.Document;
+import org.dom4j.Element;
 import org.dom4j.Node;
 import org.openmrs.api.context.Context;
 import org.openmrs.messagesource.MessageSourceService;
@@ -51,15 +52,11 @@ public class RadLexUtil {
 
     /**
      *
-     * @param xPath
      * @return Map<RADLEX_CODE, RADLEX_CODE_MEANING>
      */
-    public Map<String,String> getRadLexCodes(String xPathCodeParent){
+    public Map<String,String> getRadLexCodes(){
         Map<String,String> radLexCodeMeaning = new HashMap<String, String>();
-//        String xPath = "//head/html/script/template_attributes/term/code";
-        List<Node> parentNodes = document.selectNodes(xPathCodeParent);
-        for(Node parentNode:parentNodes) {
-            List<Node> nodes = (List<Node>) parentNode.selectNodes("//code");
+            List<Node> nodes = (List<Node>) document.selectNodes("//code");
             for (Node node : nodes) {
                 String scheme = node.valueOf("@scheme");
                 if (!scheme.toUpperCase().equals("RADLEX"))
@@ -68,7 +65,6 @@ public class RadLexUtil {
                 String codeMeaning = node.valueOf("@meaning");
                 radLexCodeMeaning.put(codeValue, codeMeaning);
             }
-        }
         return radLexCodeMeaning;
     }
 
@@ -78,18 +74,93 @@ public class RadLexUtil {
      */
     public Map<String,String> getCodedContent(){
         String xml = "//html/head/script/template_attributes/coded_content/entry";
-        List list = document.selectNodes(xml);
-    }
-    public String getCodedContentBody(String radLexCode){
-        Map<String, String> codedContent = getCodedContent();
-        if(!codedContent.containsKey(radLexCode))
-            return null;
-        String origtxt = codedContent.get(radLexCode);
-        String xPath = "//html/head/body/section";
-        List<Node> sections = document.selectNodes(xPath);
-        for(Node section:sections){
-
+        Map<String,String> codedContent = new HashMap<String, String>();
+        List entryNodes = document.selectNodes(xml);
+        for (Iterator<Element> it = entryNodes.iterator(); it.hasNext();){
+            Element entryNode = it.next();
+            String origtxt = entryNode.attributeValue("ORIGTXT");
+            for(Iterator<Element> itInner = entryNode.elementIterator();itInner.hasNext();) {
+                Element childNode = itInner.next();
+                String childNodeName = childNode.getName();
+                if(childNodeName.equals("term")){
+                    Element code = childNode.element("code");
+                    if(code.attributeValue("scheme").toUpperCase().equals("RADLEX")) {
+                        String codeValue = code.attributeValue("value");
+                        codedContent.put(codeValue,origtxt);
+                    }
+                }
+            }
         }
+        return codedContent;
+    }
+
+    /**
+     *
+     * @param radLexCode
+     * @return if multiple values returned, string should start with 'multiple;;' and the values should be separated with double semicolon ';;
+     * @return if elementType = select , returns the selected options
+     */
+    public String getBodyCodedContent(String radLexCode){
+        boolean multiple = false;
+        String retVal=null;
+        Map<String, String> codedContent = getCodedContent();
+        if(!codedContent.containsKey(radLexCode)) {
+            return null;
+        }
+        /* find section paragraph containing input/select/textarea element with id=origtxt*/
+        String origtxt = codedContent.get(radLexCode);
+
+        String xPath = "//html/body/section/p";
+        List<Element> sectionParagraphs = document.selectNodes(xPath);
+        for(Element sectionParagraph:sectionParagraphs){
+            if(sectionParagraph.elements("input")!=null){
+                List<Element> elements = sectionParagraph.elements("input");
+                for (Element inputElement:elements) {
+                    String id = inputElement.attributeValue("id");
+                    if(!id.equals(origtxt))
+                        continue;
+                    String type = inputElement.attributeValue("type");
+                    inputElement.attributeValue("type");
+                    if (type.equals("text") || type.equals("number") || type.equals("date") || type.equals("time")) {
+                        return inputElement.attributeValue("value");
+                    } else if (type.equals("checkbox")) {
+
+                    }
+                }
+            }else if(sectionParagraph.elements("textarea")!=null) {
+                List<Element> textAreaElements = sectionParagraph.elements("textarea");
+                for(Element textAreaElement: textAreaElements) {
+                    String id = textAreaElement.attributeValue("id");
+                    if (!id.equals(origtxt))
+                        continue;
+                    return textAreaElement.getText();
+                }
+
+
+            }else if(sectionParagraph.elements("select")!=null){
+                List<Element> selectElements = sectionParagraph.elements("select");
+                for(Element selectElement:selectElements) {
+                    String id = selectElement.attributeValue("id");
+                    if (!id.equals(origtxt))
+                        continue;
+                    multiple = selectElement.attribute("multiple") != null;
+                    retVal="";
+                    if(multiple)
+                        retVal="multiple;;";
+                    for (Element optionElement : (List<Element>) selectElement.elements("options")) {
+                        if(optionElement.attribute("selected")!=null){
+                            retVal += optionElement.attributeValue("value");
+                            if(!multiple)
+                                return  retVal;
+                            else
+                                retVal += ";;";
+                        }
+                    }
+                }
+                return retVal;
+            }
+        }
+        return null;
     }
 
 }
