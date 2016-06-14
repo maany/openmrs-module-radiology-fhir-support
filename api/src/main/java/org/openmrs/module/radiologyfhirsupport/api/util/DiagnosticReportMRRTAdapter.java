@@ -1,18 +1,23 @@
 package org.openmrs.module.radiologyfhirsupport.api.util;
 
 import ca.uhn.fhir.model.dstu2.composite.CodingDt;
+import ca.uhn.fhir.model.dstu2.composite.ResourceReferenceDt;
 import ca.uhn.fhir.model.dstu2.resource.DiagnosticReport;
+import ca.uhn.fhir.model.dstu2.resource.Observation;
 import ca.uhn.fhir.model.dstu2.resource.Patient;
 import ca.uhn.fhir.model.dstu2.valueset.DiagnosticReportStatusEnum;
 import ca.uhn.fhir.model.primitive.IdDt;
+import ca.uhn.fhir.model.primitive.StringDt;
 import org.dom4j.Document;
-import org.openmrs.api.APIException;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.util.FHIRPatientUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Manages @{@link DiagnosticReport} creation from values provided by @{@link org.openmrs.module.radiologyfhirsupport.MRRTTemplate}
@@ -20,7 +25,7 @@ import java.util.List;
  */
 public class DiagnosticReportMRRTAdapter {
     private DiagnosticReport diagnosticReport;
-
+    private static Logger logger = Logger.getLogger(DiagnosticReportMRRTAdapter.class.getName());
     public DiagnosticReportMRRTAdapter(DiagnosticReport diagnosticReport) {
         this.diagnosticReport = diagnosticReport;
     }
@@ -88,24 +93,66 @@ public class DiagnosticReportMRRTAdapter {
      * Patient Name = RID13160
      * If patient identifier is OpenMRS patient uuid, then mapping is successful
      */
-    public void setSubject(Document document){
+    public void setSubject(Document document,String radLexCode){
         RadLexUtil radLexUtil = new RadLexUtil(document);
-        String patientName = radLexUtil.getBodyCodedContent("RID13160");
-        String patientIdentifier = radLexUtil.getBodyCodedContent("RID13160");
+        String patientIdentifier = radLexUtil.getBodyCodedContent(radLexCode);
         PatientService patientService = Context.getPatientService();
         org.openmrs.Patient patient = patientService.getPatientByUuid(patientIdentifier);
         if(patient==null){
-            throw new APIException("No Patient with uuid = " + patientIdentifier + " found in OpenMRS records");
+            logger.log(Level.SEVERE,"No Patient with uuid = null found in OpenMRS records");
+            return;
         }
         Patient fhirPatient = FHIRPatientUtil.generatePatient(patient);
         diagnosticReport.getSubject().setResource(fhirPatient);
+        /*TODO create a patient with whatever details available */
     }
     public void setIssued(){
 
     }
-    public void setResult(){
+
+    /**
+     * TODO A LOOOOOOOTTTT of processing can be done here, create subMethods based on type of observations later
+     */
+    public void setRadlexResults(Document document){
+        List<ResourceReferenceDt> resultReferenceDtList = new ArrayList<ResourceReferenceDt>();
+
+        RadLexUtil radLexUtil = new RadLexUtil(document);
+        Map<String,String> radLexCodes = radLexUtil.getRadLexCodes();
+        for(String code:radLexCodes.keySet()){
+            String observationString = radLexUtil.getBodyCodedContent(code);
+            Observation observation = getObservationFromString("RadLex",code,radLexCodes.get(code),observationString);
+            resultReferenceDtList.add(new ResourceReferenceDt(observation));
+        }
+
+        if (!resultReferenceDtList.isEmpty()) {
+            diagnosticReport.setResult(resultReferenceDtList);
+        }
+    }
+
+    /**
+     * Helper method for @setRadlexResults
+     * @param codingScheme
+     * @param code
+     * @param resultName
+     * @param resultValue
+     */
+    private Observation getObservationFromString(String codingScheme, String code, String resultName, String resultValue){
+
+        Observation observation = new Observation();
+        CodingDt coding = observation.getCode().addCoding();
+        coding.setCode(code).setSystem(codingScheme).setDisplay(resultName);
+
+        // Create a quantity datatype
+        observation.setValue(new StringDt(resultValue));
+        return observation;
+    }
+    public void setConclusion(){
 
     }
+    public void setImage(){
+
+    }
+
     public DiagnosticReport getDiagnosticReport(){
         return diagnosticReport;
     }

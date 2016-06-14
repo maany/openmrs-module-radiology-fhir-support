@@ -121,9 +121,12 @@ public class RadLexUtil {
                         continue;
                     String type = inputElement.attributeValue("type");
                     inputElement.attributeValue("type");
-                    if (type.equals("text") || type.equals("number") || type.equals("date") || type.equals("time")) {
+                    if (type.equals("text") || type.equals("date") || type.equals("time")) {
                         return inputElement.attributeValue("value");
-                    } else if (type.equals("checkbox")) {
+                    } else if (type.equals("number") ){
+                        String units = inputElement.attributeValue("data-field-units");
+                        return inputElement.attributeValue("value") + " " +units;
+                    } if (type.equals("checkbox")) {
 
                     }
                 }

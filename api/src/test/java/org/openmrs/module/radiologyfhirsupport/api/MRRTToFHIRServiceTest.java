@@ -75,11 +75,16 @@ public class MRRTToFHIRServiceTest extends BaseModuleContextSensitiveTest{
         MRRTTemplateService mrrtTemplateService = Context.getService(MRRTTemplateService.class);
         Map<String,String> xPathMappings = getXPathMappings();
         System.out.println("" + mrrtTemplateService.getAll().size());
-        DiagnosticReport diagnosticReport = mrrtToFHIRService.convertMRRTToFHIRViaXPath(mrrtTemplateService.getAll().get(0),xPathMappings );
-        assertNotNull("Diagnostic Report was null",diagnosticReport);
-        System.out.println("Id : " + diagnosticReport.getId().getIdPart().toString());
-        System.out.println("Status : " + diagnosticReport.getStatus());
-        System.out.println("Service Category : " + diagnosticReport.getServiceCategory().getCoding().get(0).toString());
+        try {
+            DiagnosticReport diagnosticReport = mrrtToFHIRService.convertMRRTToFHIRViaXPath(mrrtTemplateService.getAll().get(0), xPathMappings);
+            assertNotNull("Diagnostic Report was null",diagnosticReport);
+            System.out.println("Id : " + diagnosticReport.getId().getIdPart().toString());
+            System.out.println("Status : " + diagnosticReport.getStatus());
+            System.out.println("Service Category : " + diagnosticReport.getServiceCategory().getCoding().get(0).toString());
+        } catch(Exception ex){
+            ex.printStackTrace();
+        }
+
     }
 
 
@@ -87,6 +92,8 @@ public class MRRTToFHIRServiceTest extends BaseModuleContextSensitiveTest{
         Map<String,String> xPathMappings = new HashMap<String, String>();
         xPathMappings.put("//html/head/script/template_attributes/status","status");
         xPathMappings.put("//html/head/title","category");
+        xPathMappings.put("RID13159","subject");
+        xPathMappings.put("RadLex","result");
 //        xPathMappings.put("","category");
         return xPathMappings;
     }

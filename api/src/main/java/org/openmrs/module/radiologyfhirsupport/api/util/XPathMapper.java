@@ -60,10 +60,16 @@ public class XPathMapper {
                 String serviceCategory = getInnerHTML(document,mrrtTemplateFieldName);
                 diagnosticReportMRRTAdapter.setServiceCategory(serviceCategory);
             }
-
+            /* in case of subject, specify the RadLex code that refers to patient uuid as the key and "subject as value"*/
             if(fhirDiagnosticReportFieldName.equals("subject")){
-                String serviceCategory = getInnerHTML(document,mrrtTemplateFieldName);
-                diagnosticReportMRRTAdapter.setSubject(document);
+                String radLexCode = mrrtTemplateFieldName;
+                diagnosticReportMRRTAdapter.setSubject(document,radLexCode);
+            }
+            /* mrrtTemplateField = coding to be used, currently only radlex*/
+            if(fhirDiagnosticReportFieldName.equals("result")){
+                String codingScheme = mrrtTemplateFieldName;
+                if(codingScheme.toUpperCase().equals("RADLEX"))
+                    diagnosticReportMRRTAdapter.setRadlexResults(document);
             }
         }
 
