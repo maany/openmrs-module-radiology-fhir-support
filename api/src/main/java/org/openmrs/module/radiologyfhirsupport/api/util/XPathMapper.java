@@ -3,9 +3,15 @@ package org.openmrs.module.radiologyfhirsupport.api.util;
 import ca.uhn.fhir.model.dstu2.resource.DiagnosticReport;
 import org.dom4j.*;
 import org.dom4j.io.SAXReader;
+import org.openmrs.api.APIException;
+import org.openmrs.api.context.Context;
+import org.openmrs.messagesource.MessageSourceService;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -54,11 +60,20 @@ public class XPathMapper {
                 String serviceCategory = getInnerHTML(document,mrrtTemplateFieldName);
                 diagnosticReportMRRTAdapter.setServiceCategory(serviceCategory);
             }
+            /**
+             * from RadLex.xls, codes for
+             * Patient Identifier = RID13159
+             * Patient Name = RID13160
+             */
+            if(fhirDiagnosticReportFieldName.equals("subject")){
+                String serviceCategory = getInnerHTML(document,mrrtTemplateFieldName);
+                diagnosticReportMRRTAdapter.setServiceCategory(serviceCategory);
+            }
         }
 
         return adapter.getDiagnosticReport();
     }
-    private Document loadDomFromXml(String xml){
+    public Document loadDomFromXml(String xml){
         SAXReader saxReader = new SAXReader();
         saxReader.setIgnoreComments(false);
         InputStream xmlStream = new ByteArrayInputStream(xml.getBytes());
@@ -72,7 +87,7 @@ public class XPathMapper {
         unCommentAndPushTemplateAttributes(document);
         return document;
     }
-    private void unCommentAndPushTemplateAttributes(Document doc){
+    public void unCommentAndPushTemplateAttributes(Document doc){
         Node node = doc.selectSingleNode("//html/head/script/comment()");
 
         if (node!=null && node.getText().contains("template_attributes")) {
@@ -86,10 +101,9 @@ public class XPathMapper {
             parent.add(subDoc.getRootElement());
         }
     }
-    private String getInnerHTML(Document document, String xPath){
+    public String getInnerHTML(Document document, String xPath){
         Node element = document.selectSingleNode(xPath);
         return element.getText();
     }
-
 
 }

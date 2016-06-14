@@ -1,6 +1,6 @@
-package org.openmrs.module.radiologyfhirsupport.api;
+package org.openmrs.module.radiologyfhirsupport.api.util;
 
-import ca.uhn.fhir.model.dstu2.resource.DiagnosticReport;
+import org.dom4j.Document;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -8,24 +8,28 @@ import org.openmrs.api.context.Context;
 import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.radiologyfhirsupport.MRRTTemplate;
 import org.openmrs.module.radiologyfhirsupport.RadiologyFHIRSupportActivator;
+import org.openmrs.module.radiologyfhirsupport.api.MRRTTemplateService;
+import org.openmrs.module.radiologyfhirsupport.api.MRRTTemplateServiceTest;
+import org.openmrs.module.radiologyfhirsupport.api.MRRTToFHIRService;
+import org.openmrs.module.radiologyfhirsupport.api.MRRTToFHIRServiceTest;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 
 import javax.sql.rowset.serial.SerialClob;
 import java.io.IOException;
 import java.sql.Clob;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static junit.framework.TestCase.assertNotNull;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
- * Created by devmaany on 12/6/16.
+ * Created by devmaany on 14/6/16.
  */
-public class MRRTToFHIRServiceTest extends BaseModuleContextSensitiveTest{
+public class RadLexUtilTest extends BaseModuleContextSensitiveTest{
     private static Logger logger = Logger.getLogger(MRRTToFHIRServiceTest.class.getName());
     protected static final String MRRT_INITIAL_DATA_XML = "MRRTTemplateDemoData.xml";
     protected static final String ENCOUNTER_INITIAL_DATA_XML= "org/openmrs/api/include/EncounterServiceTest-initialData.xml";
@@ -70,25 +74,14 @@ public class MRRTToFHIRServiceTest extends BaseModuleContextSensitiveTest{
         logger.log(Level.CONFIG,"Test Data Configured Properly");
     }
     @Test
-    public void convertMRRTToFHIRDiagnosticReport_shouldReturnDiagnosticReportObject(){
-        MRRTToFHIRService mrrtToFHIRService = Context.getService(MRRTToFHIRService.class);
-        MRRTTemplateService mrrtTemplateService = Context.getService(MRRTTemplateService.class);
-        Map<String,String> xPathMappings = getXPathMappings();
-        System.out.println("" + mrrtTemplateService.getAll().size());
-        DiagnosticReport diagnosticReport = mrrtToFHIRService.convertMRRTToFHIRViaXPath(mrrtTemplateService.getAll().get(0),xPathMappings );
-        assertNotNull("Diagnostic Report was null",diagnosticReport);
-        System.out.println("Id : " + diagnosticReport.getId().getIdPart().toString());
-        System.out.println("Status : " + diagnosticReport.getStatus());
-        System.out.println("Service Category : " + diagnosticReport.getServiceCategory().getCoding().get(0).toString());
-    }
+    public void getRadLexCodes_shouldReturnRadLexCodes(){
+        Document document = loadDOM();
+        RadLexUtil radLexUtil = new RadLexUtil(document);
+        assertNotNull(radLexUtil);
+        String xPath = "//html/head/script/template_attributes/term";
+        Map<String, String> radLexCodes = radLexUtil.getRadLexCodes(xPath);
+        assertNotEquals(radLexCodes.size(),0);
 
-
-    public Map<String,String> getXPathMappings() {
-        Map<String,String> xPathMappings = new HashMap<String, String>();
-        xPathMappings.put("//html/head/script/template_attributes/status","status");
-        xPathMappings.put("//html/head/title","category");
-//        xPathMappings.put("","category");
-        return xPathMappings;
     }
     void loadMRRTTemplates() throws SQLException {
         MRRTTemplateService mrrtTemplateService = Context.getService(MRRTTemplateService.class);
@@ -457,7 +450,6 @@ public class MRRTToFHIRServiceTest extends BaseModuleContextSensitiveTest{
         chestXRay.setXml(xml);
         chestXRayEncounterUUID = mrrtTemplateService.create(chestXRay);
     }
-
     private void loadInstallationEntries() {
         RadiologyFHIRSupportActivator radiologyFHIRSupportActivator = new RadiologyFHIRSupportActivator();
         MessageSourceService messageSourceService = Context.getMessageSourceService();
@@ -469,4 +461,21 @@ public class MRRTToFHIRServiceTest extends BaseModuleContextSensitiveTest{
         radiologyFHIRSupportActivator.addDemoPatient(messageSourceService);
 
     }
+    private Document loadDOM(){
+        MRRTTemplateService mrrtTemplateService = Context.getService(MRRTTemplateService.class);
+        MRRTTemplate template = mrrtTemplateService.getAll().get(0);
+        String xml = null;
+        try {
+            xml = mrrtTemplateService.clobToString(template.getXml());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        MRRTToFHIRServiceTest mrrtToFHIRServiceTest = new MRRTToFHIRServiceTest();
+        XPathMapper xPathMapper = new XPathMapper(template.getEncounterUuid(),xml,mrrtToFHIRServiceTest.getXPathMappings());
+        return xPathMapper.loadDomFromXml(xml);
+    }
+
+
 }

@@ -75,6 +75,10 @@ public class DiagnosticReportMRRTAdapter {
     public void setPerformer(){
 
     }
+
+    /**
+     *
+     */
     public void setSubject(){
 
     }
