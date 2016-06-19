@@ -5,10 +5,11 @@
 
 
 <h2>
-    <openmrs:message code="radiologyfhirsupport.mrrt.manage"/>
+    <%--<openmrs:message code="radiologyfhirsupport.mrrt.manage"/>--%>
 </h2>
+<p>
 <a href="${pageContext.request.contextPath}/module/radiologyfhirsupport/template/new.form"><openmrs:message
-        code="radiologyfhirsupport.registered.new"/></a><br/><br/>
+        code="radiologyfhirsupport.mrrt.registered.new"/></a><br/><br/>
 </p>
 
 
@@ -21,7 +22,8 @@
                 <tr>
                     <th>S.no</th>
                     <th>Name</th>
-                    <th>Encounter</th>
+                    <th>Encounter UUID</th>
+                    <th>Encounter Date</th>
                 </tr>
                 <% int sNo = 0; %>
                 <c:forEach items="${templateMap}" var="templateMap" varStatus="i">
@@ -31,8 +33,8 @@
                         <td>
                             <a href="${pageContext.request.contextPath}/module/radiologyfhirsupport/template/view/${templateMap.key.id}.form"><c:out
                                     value="${templateMap.key.name}"/></a></td>
-                        <td><c:out value="${templateMap.key.encounterUuid}"/></td>
-                        <td><a href="${pageContext.request.contextPath}/admin/encounters/encounter.form?encounterId=${templateMap.value.encounterId}" ><c:out value="${templateMap.value.encounterDatetime}"/></a></td>
+                        <td><a href="${pageContext.request.contextPath}/admin/encounters/encounter.form?encounterId=${templateMap.value.encounterId}" ><c:out value="${templateMap.key.encounterUuid}"/></a></td>
+                        <td><c:out value="${templateMap.value.encounterDatetime}"/></td>
                     </tr>
                 </c:forEach>
             </table>
