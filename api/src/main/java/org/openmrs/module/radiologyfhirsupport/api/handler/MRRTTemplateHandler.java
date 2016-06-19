@@ -31,7 +31,7 @@ public class MRRTTemplateHandler extends AbstractHandler implements DiagnosticRe
             String templateNotFoundError = Context.getMessageSourceService().getMessage("radiologyfhirsupport.templateNotFoundError");
             throw new APIException(templateNotFoundError);
         }
-        /*TODO get Map*/
+        /*TODOne get Map*/
         MRRTToFHIRService mrrtToFHIRService = Context.getService(MRRTToFHIRService.class);
         DiagnosticReport diagnosticReport = Context.getService(MRRTToFHIRService.class).convertMRRTToFHIRViaXPath(mrrtTemplate, mrrtToFHIRService.getDefaultMapping());
         return diagnosticReport;

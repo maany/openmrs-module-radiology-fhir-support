@@ -8,7 +8,9 @@ import ca.uhn.fhir.model.dstu2.resource.Patient;
 import ca.uhn.fhir.model.dstu2.valueset.DiagnosticReportStatusEnum;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.model.primitive.StringDt;
+import org.dom4j.Attribute;
 import org.dom4j.Document;
+import org.dom4j.Element;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.util.FHIRPatientUtil;
@@ -146,7 +148,35 @@ public class DiagnosticReportMRRTAdapter {
         observation.setValue(new StringDt(resultValue));
         return observation;
     }
-    public void setConclusion(){
+
+    public void setConclusion(Document document, String radlexCode){
+        RadLexUtil radLexUtil = new RadLexUtil(document);
+        String impressionCode = radLexUtil.getCodeForMeaning("impression");
+        String singleElementContent = null;
+        Element impressionBodySectionElement = null;
+        if(radlexCode==null || radlexCode.length()<1){
+            //Search xml by <section data-section-name="impression"> tag and store content in singleElementContent
+            List<Element> sections = document.selectNodes("//html/body/section");
+            for(Element section:sections){
+                Attribute dataSectionNameElement = section.attribute("data-section-name");
+                if(dataSectionNameElement!=null){
+                    String dataSectionName = section.attributeValue("data-section-name");
+                    if(dataSectionName.toLowerCase().equals("impression")) {
+                        impressionBodySectionElement = section;
+                        break;
+                    }
+
+                }
+            }
+            Element impressionParagraph = impressionBodySectionElement.element("p");
+            singleElementContent = radLexUtil.getSingleElementContent(impressionParagraph);
+
+        } else {
+            //search xml by radlexCode and return <section data-section-name="impression"> Element's content in singleElementContent
+            singleElementContent =  radLexUtil.getBodyCodedContent(radlexCode);
+        }
+        // set conclusion in fhir;
+        diagnosticReport.setConclusion(singleElementContent);
 
     }
     public void setImage(){
@@ -156,4 +186,6 @@ public class DiagnosticReportMRRTAdapter {
     public DiagnosticReport getDiagnosticReport(){
         return diagnosticReport;
     }
+
+
 }

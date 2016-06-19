@@ -69,7 +69,7 @@ public class  RadiologyFHIRSupportManageController {
 			return mrrtTemplateService.getAll().get(0).getEncounterUuid();
 		}
 		MRRTTemplate chestXRay = new MRRTTemplate();
-		String chestXRayString = " <!DOCTYPE html>\n" +
+		String chestXRayString = "<!DOCTYPE html>\n" +
 				"<html>\n" +
 				"<head>\n" +
 				"<meta charset='UTF-8'/>\n" +
@@ -98,45 +98,45 @@ public class  RadiologyFHIRSupportManageController {
 				" <coding_scheme name='LOINC' designator='2.16.840.1.113883.6.1' />\n" +
 				"</coding_schemes>\n" +
 				"<term>\n" +
-				" <code meaning='projection radiography' value='RID10345' scheme='RadLex'>\n" +
+				" <code meaning='projection radiography' value='RID10345' scheme='RadLex'/>\n" +
 				"</term>\n" +
 				"<term>\n" +
-				" <code meaning='thorax' value='RID1243' scheme='RadLex'>\n" +
+				" <code meaning='thorax' value='RID1243' scheme='RadLex'/>\n" +
 				"</term>\n" +
 				"<coded_content>\n" +
 				"<entry ORIGTXT='T102_2'>\n" +
 				" <term>\n" +
-				"  <code meaning='procedure' value='RID1559' scheme='RadLex'>\n" +
+				"  <code meaning='procedure' value='RID1559' scheme='RadLex'/>\n" +
 				" </term>\n" +
 				"</entry>\n" +
 				"<entry ORIGTXT='T102_7'>\n" +
 				" <term>\n" +
-				"  <code meaning='clinical information' value='RID13166' scheme='RadLex'>\n" +
+				"  <code meaning='clinical information' value='RID13166' scheme='RadLex'/>\n" +
 				" </term>\n" +
 				"</entry>\n" +
 				"<entry ORIGTXT='T102_12'>\n" +
 				" <term>\n" +
-				"  <code meaning='comparison' value='RID28483' scheme='RadLex'>\n" +
+				"  <code meaning='comparison' value='RID28483' scheme='RadLex'/>\n" +
 				" </term>\n" +
 				"</entry>\n" +
 				"<entry ORIGTXT='T102_15'>\n" +
 				" <term>\n" +
-				"  <code meaning='heart' value='RID1385' scheme='RadLex'>\n" +
+				"  <code meaning='heart' value='RID1385' scheme='RadLex'/>\n" +
 				" </term>\n" +
 				"</entry>\n" +
 				"<entry ORIGTXT='T102_17'>\n" +
 				" <term>\n" +
-				"  <code meaning='lungs' value='RID13437' scheme='RadLex'>\n" +
+				"  <code meaning='lungs' value='RID13437' scheme='RadLex'/>\n" +
 				" </term>\n" +
 				"</entry>\n" +
 				"<entry ORIGTXT='T102_20'>\n" +
 				" <term>\n" +
-				"  <code meaning='set of bones' value='RID28569' scheme='RadLex'>\n" +
+				"  <code meaning='set of bones' value='RID28569' scheme='RadLex'/>\n" +
 				" </term>\n" +
 				"</entry>\n" +
 				"<entry ORIGTXT='T102_23'>\n" +
 				" <term>\n" +
-				"  <code meaning='impression section' value='RID13170' scheme='RadLex'>\n" +
+				"  <code meaning='impression section' value='RID13170' scheme='RadLex'/>\n" +
 				" </term>\n" +
 				"</entry>\n" +
 				"</coded_content>\n" +

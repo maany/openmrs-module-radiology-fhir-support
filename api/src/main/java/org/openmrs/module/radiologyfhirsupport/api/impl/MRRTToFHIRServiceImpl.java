@@ -48,6 +48,7 @@ public class MRRTToFHIRServiceImpl implements MRRTToFHIRService {
         xPathMappings.put("//html/head/title", "category");
         xPathMappings.put("RID13159", "subject");
         xPathMappings.put("RadLex", "result");
+        xPathMappings.put("lookup", "conclusion");
         return xPathMappings;
     }
 

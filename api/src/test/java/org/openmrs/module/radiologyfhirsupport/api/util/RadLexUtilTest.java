@@ -81,7 +81,7 @@ public class RadLexUtilTest extends BaseModuleContextSensitiveTest{
         assertNotNull(radLexUtil);
         Map<String, String> radLexCodes = radLexUtil.getRadLexCodes();
         assertNotEquals(radLexCodes.size(),0);
-        Map<String,String> codedContent = radLexUtil.getCodedContent();
+        Map<String,String> codedContent = radLexUtil.getCodedContent(true);
         String radLexCode = "RID10376";
         String content = radLexUtil.getBodyCodedContent(radLexCode);
         assertEquals("Normal.",content);

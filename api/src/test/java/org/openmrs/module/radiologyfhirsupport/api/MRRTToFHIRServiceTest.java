@@ -84,6 +84,8 @@ public class MRRTToFHIRServiceTest extends BaseModuleContextSensitiveTest{
             System.out.println("Status : " + diagnosticReport.getStatus());
             System.out.println("Service Category : " + diagnosticReport.getServiceCategory().getCoding().get(0).toString());
             Assert.assertNotEquals("results were not set",0,diagnosticReport.getResult().size());
+            assertNotNull("Error finding conclusion","Conclusion : " + diagnosticReport.getConclusion());
+            System.out.println(diagnosticReport.getConclusion());
         } catch(Exception ex){
             ex.printStackTrace();
         }
@@ -103,6 +105,7 @@ public class MRRTToFHIRServiceTest extends BaseModuleContextSensitiveTest{
         xPathMappings.put("//html/head/title","category");
         xPathMappings.put("RID13159","subject");
         xPathMappings.put("RadLex","result");
+        xPathMappings.put("lookup", "conclusion");
 //        xPathMappings.put("","category");
         return xPathMappings;
     }

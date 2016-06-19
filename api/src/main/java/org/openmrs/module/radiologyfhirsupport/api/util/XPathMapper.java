@@ -35,12 +35,10 @@ public class XPathMapper {
     private DiagnosticReport parseXMLAndMapFields(DiagnosticReport diagnosticReport){
 
         Document document = loadDomFromXml(xml);
-        DiagnosticReportMRRTAdapter adapter = new DiagnosticReportMRRTAdapter(diagnosticReport);
+        DiagnosticReportMRRTAdapter diagnosticReportMRRTAdapter = new DiagnosticReportMRRTAdapter(diagnosticReport);
         for(Map.Entry<String,String> xPathMapping :xPathMappings.entrySet()){
             String mrrtTemplateFieldName= xPathMapping.getKey(); // //html/head/title
             String fhirDiagnosticReportFieldName = xPathMapping.getValue(); // title
-            DiagnosticReportMRRTAdapter diagnosticReportMRRTAdapter = new DiagnosticReportMRRTAdapter(diagnosticReport);
-
             if (fhirDiagnosticReportFieldName.equals("id")) {
                 diagnosticReportMRRTAdapter.setId(encounterUuid);
             }
@@ -65,9 +63,17 @@ public class XPathMapper {
                 if(codingScheme.toUpperCase().equals("RADLEX"))
                     diagnosticReportMRRTAdapter.setRadlexResults(document);
             }
+            if(fhirDiagnosticReportFieldName.equals("conclusion")){
+                String radLexCode = mrrtTemplateFieldName;
+                if(radLexCode.equals("lookup")){
+                    diagnosticReportMRRTAdapter.setConclusion(document,null);
+                }else {
+                    diagnosticReportMRRTAdapter.setConclusion(document, radLexCode);
+                }
+            }
         }
 
-        return adapter.getDiagnosticReport();
+        return diagnosticReportMRRTAdapter.getDiagnosticReport();
     }
     public Document loadDomFromXml(String xml){
         SAXReader saxReader = new SAXReader();

@@ -56,15 +56,15 @@ public class RadLexUtil {
      */
     public Map<String,String> getRadLexCodes(){
         Map<String,String> radLexCodeMeaning = new HashMap<String, String>();
-            List<Node> nodes = (List<Node>) document.selectNodes("//code");
-            for (Node node : nodes) {
-                String scheme = node.valueOf("@scheme");
-                if (!scheme.toUpperCase().equals("RADLEX"))
-                    continue;
-                String codeValue = node.valueOf("@value");
-                String codeMeaning = node.valueOf("@meaning");
-                radLexCodeMeaning.put(codeValue, codeMeaning);
-            }
+        List<Node> nodes = (List<Node>) document.selectNodes("//code");
+        for (Node node : nodes) {
+            String scheme = node.valueOf("@scheme");
+            if (!scheme.toUpperCase().equals("RADLEX"))
+                continue;
+            String codeValue = node.valueOf("@value");
+            String codeMeaning = node.valueOf("@meaning");
+            radLexCodeMeaning.put(codeValue, codeMeaning);
+        }
         return radLexCodeMeaning;
     }
 
@@ -72,7 +72,7 @@ public class RadLexUtil {
      *
      * @return Map<RADLEX_CODE,ORIGTXT>
      */
-    public Map<String,String> getCodedContent(){
+    public Map<String,String> getCodedContent(boolean codeOrigtxt){
         String xml = "//html/head/script/template_attributes/coded_content/entry";
         Map<String,String> codedContent = new HashMap<String, String>();
         List entryNodes = document.selectNodes(xml);
@@ -86,7 +86,10 @@ public class RadLexUtil {
                     Element code = childNode.element("code");
                     if(code.attributeValue("scheme").toUpperCase().equals("RADLEX")) {
                         String codeValue = code.attributeValue("value");
-                        codedContent.put(codeValue,origtxt);
+                        if(codeOrigtxt)
+                            codedContent.put(codeValue,origtxt);
+                        else
+                            codedContent.put(origtxt,codeValue);
                     }
                 }
             }
@@ -103,7 +106,7 @@ public class RadLexUtil {
     public String getBodyCodedContent(String radLexCode){
         boolean multiple = false;
         String retVal=null;
-        Map<String, String> codedContent = getCodedContent();
+        Map<String, String> codedContent = getCodedContent(true);
         if(!codedContent.containsKey(radLexCode)) {
             return null;
         }
@@ -165,5 +168,66 @@ public class RadLexUtil {
         }
         return null;
     }
+    public String getSingleElementContent(Element sectionParagraph){
+        boolean multiple = false;
+        String retVal = null;
+        if(sectionParagraph.elements("input")!=null && !sectionParagraph.elements("input").isEmpty()){
+            List<Element> elements = sectionParagraph.elements("input");
+            for (Element inputElement:elements) {
+                String id = inputElement.attributeValue("id");
+                String type = inputElement.attributeValue("type");
+                inputElement.attributeValue("type");
+                if (type.equals("text") || type.equals("date") || type.equals("time")) {
+                    return inputElement.attributeValue("value");
+                } else if (type.equals("number") ){
+                    String units = inputElement.attributeValue("data-field-units");
+                    return inputElement.attributeValue("value") + " " +units;
+                } if (type.equals("checkbox")) {
+
+                }
+            }
+        }else if(sectionParagraph.elements("textarea")!=null) {
+            List<Element> textAreaElements = sectionParagraph.elements("textarea");
+            for(Element textAreaElement: textAreaElements) {
+                String id = textAreaElement.attributeValue("id");
+                return textAreaElement.getText();
+            }
+
+
+        }else if(sectionParagraph.elements("select")!=null){
+            List<Element> selectElements = sectionParagraph.elements("select");
+            for(Element selectElement:selectElements) {
+                String id = selectElement.attributeValue("id");
+                multiple = selectElement.attribute("multiple") != null;
+                retVal="";
+                if(multiple)
+                    retVal="multiple;;";
+                for (Element optionElement : (List<Element>) selectElement.elements("options")) {
+                    if(optionElement.attribute("selected")!=null){
+                        retVal += optionElement.attributeValue("value");
+                        if(!multiple)
+                            return  retVal;
+                        else
+                            retVal += ";;";
+                    }
+                }
+            }
+            return retVal;
+        }
+        return null;
+    }
+    public String getCodeForMeaning(String meaning){
+        Map<String, String> codedContent = getCodedContent(false);
+        Map<String, String> radLexCodes = getRadLexCodes();
+        for(Map.Entry<String,String> radLexCodeEntry : radLexCodes.entrySet()){
+            if(radLexCodeEntry.getValue().toLowerCase().equals(meaning.toLowerCase())){
+                return radLexCodeEntry.getKey();
+            }
+        }
+        return null;
+    }
+
 
 }
+
+
