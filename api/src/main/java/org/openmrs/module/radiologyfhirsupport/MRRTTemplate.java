@@ -36,6 +36,8 @@ public class MRRTTemplate extends BaseOpenmrsObject implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
+	@Column(name = "name")
+	private String name;
 	@Lob
 	@Column(name = "xml")
 	private Clob xml;
@@ -164,5 +166,17 @@ public class MRRTTemplate extends BaseOpenmrsObject implements Serializable {
 
 	public void setVoidReason(String voidReason) {
 		this.voidReason = voidReason;
+	}
+
+	public static long getSerialVersionUID() {
+		return serialVersionUID;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 }

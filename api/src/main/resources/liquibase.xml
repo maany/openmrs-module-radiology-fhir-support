@@ -42,4 +42,9 @@
                                  constraintName="radfhir_encounter_fk" referencedTableName="encounter"
                                  referencedColumnNames="uuid"/>
         </changeSet>
+    <changeSet id="radfhir-190620161715" author="maany">
+        <addColumn tableName="radiology_mrrt_template">
+            <column name="name" type="varchar(256)"></column>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>
