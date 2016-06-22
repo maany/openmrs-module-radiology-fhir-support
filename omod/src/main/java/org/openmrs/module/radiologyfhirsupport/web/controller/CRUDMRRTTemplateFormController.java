@@ -27,18 +27,18 @@ import java.util.logging.Logger;
  * Created by devmaany on 20/6/16.
  */
 @Controller
-@RequestMapping(value = CRUDMRRTTemplateFormController.VIEW_EDIT_REQUEST_MAPPING)
+//@RequestMapping(value = CRUDMRRTTemplateFormController.VIEW_EDIT_REQUEST_MAPPING)
 public class CRUDMRRTTemplateFormController {
     protected final Logger logger = Logger.getLogger(CRUDMRRTTemplateFormController.class.getName());
     public static final String VIEW_EDIT_FORM_VIEW = "/module/radiologyfhirsupport/viewEdit";
     public static final String VIEW_EDIT_REQUEST_MAPPING = "module/radiologyfhirsupport/template/";
 
     @RequestMapping(value = CRUDMRRTTemplateFormController.VIEW_EDIT_REQUEST_MAPPING + "view/{templateId}.form", method = RequestMethod.GET)
-    public String showForm(@PathVariable Integer templateId, ModelMap map) {
+    public ModelAndView viewEdit(@PathVariable Integer templateId, ModelMap map) {
         MRRTTemplate mrrtTemplate = getService().getById(templateId);
         map.addAttribute("template", mrrtTemplate);
         System.out.println("Testing");
-        return "module/radiologyfhirsupport/viewEdit";
+        return new ModelAndView("module/radiologyfhirsupport/viewEdit");
     }
 
     @RequestMapping(value = CRUDMRRTTemplateFormController.VIEW_EDIT_REQUEST_MAPPING + "view/{templateId}", method = RequestMethod.POST)
