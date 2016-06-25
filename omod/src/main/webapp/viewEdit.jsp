@@ -28,8 +28,14 @@
         });
     });
 </script>
+
+<link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/codemirror/CodeMirror/master/lib/codemirror.css">
+<script type="text/javascript" src="https://cdn.rawgit.com/codemirror/CodeMirror/master/lib/codemirror.js"></script>
+<script type="text/javascript" src="https://cdn.rawgit.com/codemirror/CodeMirror/master/mode/xml/xml.js"></script>
+
+
 <h2><openmrs:message code="radiologyfhirsupport.mrrt.viewEdit"/></h2>
-Yoyo
+
 <form:form modelAttribute="template">
 <form:errors path="*" cssClass="errorblock" element="div"/>
 <form:hidden path="id"/>
@@ -41,13 +47,21 @@ Yoyo
     </tr>
     <tr>
         <td>XML</td>
-        <td><form:textarea path="xml" rows="20" cols="50"/></td>
-        <td><form:errors path="xml" cssClass="error"/></td>
+        <td><textarea id = "editor" path="xml" rows="20" cols="50">${xml}</textarea></td>
+        <%--<td><form:errors path="
+        .+xml" cssClass="error"/></td>--%>
     </tr>
 </table>
 <input type="submit" value="Save Changes" formmethod="post" />
 <button>Delete</button>
 </form:form>
+
+<script>
+    var editor = CodeMirror.fromTextArea(document.getElementById("editor"), {
+        lineNumbers: true,
+        mode:  "xml"
+    });
+</script>
 
 
 <%@ include file="/WEB-INF/template/footer.jsp" %>

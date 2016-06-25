@@ -20,6 +20,8 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -37,6 +39,13 @@ public class CRUDMRRTTemplateFormController {
     public ModelAndView viewEdit(@PathVariable Integer templateId, ModelMap map) {
         MRRTTemplate mrrtTemplate = getService().getById(templateId);
         map.addAttribute("template", mrrtTemplate);
+        try {
+            map.addAttribute("xml", Context.getService(MRRTTemplateService.class).clobToString(mrrtTemplate.getXml()));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         System.out.println("Testing");
         return new ModelAndView("module/radiologyfhirsupport/viewEdit");
     }
