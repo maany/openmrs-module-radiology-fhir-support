@@ -55,14 +55,20 @@ public class CRUDMRRTTemplateFormController {
     }
 
     @RequestMapping(value = CRUDMRRTTemplateFormController.VIEW_EDIT_REQUEST_MAPPING + "view/{templateId}", method = RequestMethod.POST)
-    public String editForm(@PathVariable Integer templateId, @Valid @ModelAttribute("template") MRRTTemplate template, BindingResult errors, ModelMap map) {
-        if (errors.hasErrors()) {
-            //TODO return error view
-            logger.info("Binding errors found");
-            return VIEW_EDIT_FORM_VIEW;
+    public String editForm(@PathVariable Integer templateId, HttpServletRequest request,@Valid @ModelAttribute("template") MRRTTemplate template, BindingResult errors, ModelMap map) {
+        String name = request.getParameter("name");
+        String xml = request.getParameter("xml");
+        xml = xml.replaceAll("script_mrrt","script");
+        xml = xml.replaceAll("\\\\n","(\\r|\\n|\\r\\n)+");
+        MRRTTemplate mrrtTemplate = getService().getById(templateId);
+        mrrtTemplate.setName(name);
+        try {
+            mrrtTemplate.setXml(getService().stringToClob(xml));
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        getService().saveOrUpdate(template);
-        logger.info("Making edits for template with id" + template.getId());
+        getService().saveOrUpdate(mrrtTemplate);
+        logger.info("Making edits for template with id" + mrrtTemplate.getId());
         return VIEW_EDIT_FORM_VIEW;
     }
 

@@ -47,7 +47,7 @@
     </tr>
     <tr>
         <td>XML</td>
-        <td><textarea id = "editor" rows="20" cols="50"></textarea></td>
+        <td><textarea name="xml" id = "editor" rows="20" cols="50"></textarea></td>
         <%--<td><form:errors path="
         .+xml" cssClass="error"/></td>--%>
     </tr>
