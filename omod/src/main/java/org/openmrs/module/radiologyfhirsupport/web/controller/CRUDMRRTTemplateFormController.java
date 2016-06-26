@@ -40,7 +40,11 @@ public class CRUDMRRTTemplateFormController {
         MRRTTemplate mrrtTemplate = getService().getById(templateId);
         map.addAttribute("template", mrrtTemplate);
         try {
-            map.addAttribute("xml", Context.getService(MRRTTemplateService.class).clobToString(mrrtTemplate.getXml()));
+            String xml =  Context.getService(MRRTTemplateService.class).clobToString(mrrtTemplate.getXml());
+            xml = xml.replaceAll("script","script_mrrt");
+            xml = xml.replaceAll("(\\r|\\n|\\r\\n)+", "\\\\n");
+
+            map.addAttribute("xml",xml);
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (IOException e) {
