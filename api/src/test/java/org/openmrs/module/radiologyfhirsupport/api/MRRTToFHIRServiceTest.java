@@ -115,7 +115,12 @@ public class MRRTToFHIRServiceTest extends BaseModuleContextSensitiveTest{
         Assert.assertNotNull(diagnosticReport);
 
     }
-
+    @Test
+    public void printData() throws IOException, SQLException {
+        MRRTTemplateService mrrtTemplateService = Context.getService(MRRTTemplateService.class);
+        MRRTTemplate mrrtTemplate = mrrtTemplateService.getAll().get(1);
+        System.out.println(mrrtTemplateService.clobToString(mrrtTemplate.getXml()));
+    }
     public Map<String,String> getXPathMappings() {
         Map<String,String> xPathMappings = new HashMap<String, String>();
         xPathMappings.put("//html/head/script/template_attributes/status","status");

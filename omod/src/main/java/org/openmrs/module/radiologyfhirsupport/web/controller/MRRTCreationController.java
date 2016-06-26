@@ -40,8 +40,8 @@ public class MRRTCreationController {
         mrrtTemplate.setXml(mrrtTemplateService.stringToClob(xml));
         System.out.println("Data received : " + mrrtTemplate.getName());
         System.out.println("Data received : " + mrrtTemplate.getXml());
-        mrrtTemplateService.saveOrUpdate(mrrtTemplate);
-        String redirectURL = request.getContextPath() + "/" + CRUDMRRTTemplateFormController.VIEW_EDIT_REQUEST_MAPPING + "/view/1.form"; // + mrrtTemplate.getId() + ".form";
+        mrrtTemplateService.create(mrrtTemplate);
+        String redirectURL = request.getContextPath() + "/" + CRUDMRRTTemplateFormController.VIEW_EDIT_REQUEST_MAPPING + "/" + mrrtTemplate.getId() + ".form";
         return new ModelAndView(new RedirectView(redirectURL));
     }
 }
