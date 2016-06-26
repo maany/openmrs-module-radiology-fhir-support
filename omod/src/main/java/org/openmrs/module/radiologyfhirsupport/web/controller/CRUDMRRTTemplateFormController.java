@@ -2,6 +2,8 @@ package org.openmrs.module.radiologyfhirsupport.web.controller;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Encounter;
+import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.radiologyfhirsupport.MRRTTemplate;
 import org.openmrs.module.radiologyfhirsupport.api.MRRTTemplateService;
@@ -72,11 +74,21 @@ public class CRUDMRRTTemplateFormController {
         return new ModelAndView(new RedirectView("/openmrs/" + MRRTIndexController.INDEX_CONTROLLER));
     }
 
-    @RequestMapping(value = CRUDMRRTTemplateFormController.VIEW_EDIT_REQUEST_MAPPING + "/{templateId}", method = RequestMethod.DELETE)
+    @RequestMapping(value = CRUDMRRTTemplateFormController.VIEW_EDIT_REQUEST_MAPPING + "/view/{templateId}", method = RequestMethod.DELETE)
     public ModelAndView deleteTemplate(HttpServletRequest request, @ModelAttribute MRRTTemplate mrrtTemplate, @PathVariable Integer templateId) {
-        mrrtTemplate = getService().delete(templateId);
-        //TODO send message that client is unregistered
+        System.out.println("We can Delete stuff now!!");
         String redirectURI = request.getContextPath() + "/" + MRRTIndexController.INDEX_CONTROLLER;
+       /* EncounterService encounterService = Context.getEncounterService();
+        MRRTTemplate template = getService().getById(templateId);
+        Encounter encounter = encounterService.getEncounterByUuid(template.encounterUuid);
+        if(encounter!=null){
+            System.out.println("Encounter found. uuid below");
+            System.out.println(encounter.getUuid());
+        }else{
+            System.out.println("Encounter not found");
+        }
+        encounterService.purgeEncounter(encounter);*///,"Voided by " + Context.getAuthenticatedUser() + " using Radiology FHIR Support module");
+        mrrtTemplate = getService().delete(templateId);
         logger.log(Level.INFO,"MRRT Template Unregistered : " + mrrtTemplate.getName());
         return new ModelAndView(new RedirectView(redirectURI));
 

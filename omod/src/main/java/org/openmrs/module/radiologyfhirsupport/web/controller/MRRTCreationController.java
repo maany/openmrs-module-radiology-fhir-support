@@ -41,7 +41,7 @@ public class MRRTCreationController {
         System.out.println("Data received : " + mrrtTemplate.getName());
         System.out.println("Data received : " + mrrtTemplate.getXml());
         mrrtTemplateService.create(mrrtTemplate);
-        String redirectURL = request.getContextPath() + "/" + CRUDMRRTTemplateFormController.VIEW_EDIT_REQUEST_MAPPING + "/" + mrrtTemplate.getId() + ".form";
+        String redirectURL = request.getContextPath() + "/" + CRUDMRRTTemplateFormController.VIEW_EDIT_REQUEST_MAPPING + "view/" + mrrtTemplate.getId() + ".form";
         return new ModelAndView(new RedirectView(redirectURL));
     }
 }

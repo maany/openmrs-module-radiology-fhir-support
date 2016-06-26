@@ -2,7 +2,7 @@
 <%@ include file="/WEB-INF/template/header.jsp"%>
 
 <%@ include file="template/localHeader.jsp"%>
-
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
 <style>
     .error {
         color: #ff0000;
@@ -21,10 +21,10 @@
         $("button").click(function () {
             var pageUrl = window.location.href;
             alert("Are you sure you want to delete this template??");
-            /*            $.ajax({
+                       $.ajax({
              url: pageUrl,
              type: 'DELETE'
-             });*/
+             });
         });
     });
 </script>
