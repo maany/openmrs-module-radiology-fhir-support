@@ -15,6 +15,7 @@ package org.openmrs.module.radiologyfhirsupport.api;
 
 import static org.junit.Assert.*;
 
+import ca.uhn.fhir.model.dstu2.resource.DiagnosticReport;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.api.context.Context;
@@ -27,7 +28,9 @@ import javax.sql.rowset.serial.SerialClob;
 import java.io.IOException;
 import java.sql.Clob;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -517,6 +520,17 @@ public class MRRTTemplateServiceTest extends BaseModuleContextSensitiveTest {
 		radiologyFHIRSupportActivator.addDefaultProvider(messageSourceService);
 		radiologyFHIRSupportActivator.addDemoPatient(messageSourceService);
 
+	}
+
+	public Map<String,String> getXPathMappings() {
+		Map<String,String> xPathMappings = new HashMap<String, String>();
+		xPathMappings.put("//html/head/script/template_attributes/status","status");
+		xPathMappings.put("//html/head/title","category");
+		xPathMappings.put("RID13159","subject");
+		xPathMappings.put("RadLex","result");
+		xPathMappings.put("lookup", "conclusion");
+//        xPathMappings.put("","category");
+		return xPathMappings;
 	}
 
 }

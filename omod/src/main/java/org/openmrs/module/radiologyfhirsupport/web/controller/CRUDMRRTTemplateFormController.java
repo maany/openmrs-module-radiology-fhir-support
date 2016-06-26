@@ -59,7 +59,7 @@ public class CRUDMRRTTemplateFormController {
         String name = request.getParameter("name");
         String xml = request.getParameter("xml");
         xml = xml.replaceAll("script_mrrt","script");
-        xml = xml.replaceAll("\\\\n","(\\r|\\n|\\r\\n)+");
+        xml = xml.replaceAll("\\\\n",System.lineSeparator());
         MRRTTemplate mrrtTemplate = getService().getById(templateId);
         mrrtTemplate.setName(name);
         try {
@@ -79,6 +79,7 @@ public class CRUDMRRTTemplateFormController {
         String redirectURI = request.getContextPath() + "/" + MRRTIndexController.INDEX_CONTROLLER;
         logger.log(Level.INFO,"MRRT Template Unregistered : " + mrrtTemplate.getName());
         return new ModelAndView(new RedirectView(redirectURI));
+
     }
 
     private MRRTTemplateService getService(){

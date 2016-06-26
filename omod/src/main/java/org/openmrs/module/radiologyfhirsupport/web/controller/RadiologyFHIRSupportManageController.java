@@ -46,6 +46,7 @@ public class  RadiologyFHIRSupportManageController {
 	}
 	@RequestMapping(value = "/module/radiologyfhirsupport/initData", method = RequestMethod.GET)
 	public String initData(ModelMap model) {
+		System.out.println("Creating template");
 		String encounterUUID = "encounterUUID not received";
 		try {
 			encounterUUID = loadMRRTTemplates();

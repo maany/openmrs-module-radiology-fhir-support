@@ -98,6 +98,23 @@ public class MRRTToFHIRServiceTest extends BaseModuleContextSensitiveTest{
         String encounterUuid = mrrtTemplateService.getAll().get(1).getEncounterUuid();
         DiagnosticReport report = mrrtTemplateHandler.getFHIRDiagnosticReportById(encounterUuid);
     }
+    @Test
+    public void codeMirrorChangesTest() throws IOException, SQLException {
+        MRRTTemplateService mrrtTemplateService = Context.getService(MRRTTemplateService.class);
+        MRRTTemplate mrrtTemplate = Context.getService(MRRTTemplateService.class).getAll().get(1);
+        String xml = mrrtTemplateService.clobToString(mrrtTemplate.getXml());
+        xml = xml.replaceAll("script","script_mrrt");
+        xml = xml.replaceAll("(\\r|\\n|\\r\\n)+", "\\\\n");
+
+        xml = xml.replaceAll("script_mrrt","script");
+        xml = xml.replaceAll("\\\\n",System.lineSeparator());
+        mrrtTemplate.setXml(mrrtTemplateService.stringToClob(xml));
+
+        MRRTToFHIRService mrrtToFHIRService = Context.getService(MRRTToFHIRService.class);
+        DiagnosticReport diagnosticReport = mrrtToFHIRService.convertMRRTToFHIRViaXPath(mrrtTemplate, getXPathMappings());
+        Assert.assertNotNull(diagnosticReport);
+
+    }
 
     public Map<String,String> getXPathMappings() {
         Map<String,String> xPathMappings = new HashMap<String, String>();
@@ -109,6 +126,18 @@ public class MRRTToFHIRServiceTest extends BaseModuleContextSensitiveTest{
 //        xPathMappings.put("","category");
         return xPathMappings;
     }
+    private void loadInstallationEntries() {
+        RadiologyFHIRSupportActivator radiologyFHIRSupportActivator = new RadiologyFHIRSupportActivator();
+        MessageSourceService messageSourceService = Context.getMessageSourceService();
+        radiologyFHIRSupportActivator.registerFHIRDiagnosticReportHandler(messageSourceService);
+        radiologyFHIRSupportActivator.registerEncounterType(messageSourceService);
+        radiologyFHIRSupportActivator.addDefaultEncounterRole(messageSourceService);
+        radiologyFHIRSupportActivator.addDefaultLocation(messageSourceService);
+        radiologyFHIRSupportActivator.addDefaultProvider(messageSourceService);
+        radiologyFHIRSupportActivator.addDemoPatient(messageSourceService);
+
+    }
+
     void loadMRRTTemplates() throws SQLException {
         MRRTTemplateService mrrtTemplateService = Context.getService(MRRTTemplateService.class);
         MRRTTemplate cardiacMRI = new MRRTTemplate();
@@ -475,17 +504,5 @@ public class MRRTToFHIRServiceTest extends BaseModuleContextSensitiveTest{
         xml = new SerialClob(chestXRayString.toCharArray());
         chestXRay.setXml(xml);
         chestXRayEncounterUUID = mrrtTemplateService.create(chestXRay);
-    }
-
-    private void loadInstallationEntries() {
-        RadiologyFHIRSupportActivator radiologyFHIRSupportActivator = new RadiologyFHIRSupportActivator();
-        MessageSourceService messageSourceService = Context.getMessageSourceService();
-        radiologyFHIRSupportActivator.registerFHIRDiagnosticReportHandler(messageSourceService);
-        radiologyFHIRSupportActivator.registerEncounterType(messageSourceService);
-        radiologyFHIRSupportActivator.addDefaultEncounterRole(messageSourceService);
-        radiologyFHIRSupportActivator.addDefaultLocation(messageSourceService);
-        radiologyFHIRSupportActivator.addDefaultProvider(messageSourceService);
-        radiologyFHIRSupportActivator.addDemoPatient(messageSourceService);
-
     }
 }
