@@ -55,7 +55,7 @@ public class CRUDMRRTTemplateFormController {
     }
 
     @RequestMapping(value = CRUDMRRTTemplateFormController.VIEW_EDIT_REQUEST_MAPPING + "view/{templateId}", method = RequestMethod.POST)
-    public String editForm(@PathVariable Integer templateId, HttpServletRequest request,@Valid @ModelAttribute("template") MRRTTemplate template, BindingResult errors, ModelMap map) {
+    public ModelAndView editForm(@PathVariable Integer templateId, HttpServletRequest request,@Valid @ModelAttribute("template") MRRTTemplate template, BindingResult errors, ModelMap map) {
         String name = request.getParameter("name");
         String xml = request.getParameter("xml");
         xml = xml.replaceAll("script_mrrt","script");
@@ -68,8 +68,8 @@ public class CRUDMRRTTemplateFormController {
             e.printStackTrace();
         }
         getService().saveOrUpdate(mrrtTemplate);
-        logger.info("Making edits for template with id" + mrrtTemplate.getId());
-        return VIEW_EDIT_FORM_VIEW;
+        logger.info("Making edits for template with id " + mrrtTemplate.getId());
+        return new ModelAndView(new RedirectView("/openmrs/" + MRRTIndexController.INDEX_CONTROLLER));
     }
 
     @RequestMapping(value = CRUDMRRTTemplateFormController.VIEW_EDIT_REQUEST_MAPPING + "/{templateId}", method = RequestMethod.DELETE)
