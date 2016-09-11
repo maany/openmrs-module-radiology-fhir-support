@@ -72,13 +72,13 @@ public class MRRTToFHIRServiceTest extends BaseModuleContextSensitiveTest{
         logger.log(Level.CONFIG,"Test Data Configured Properly");
     }
     @Test
-    public void convertMRRTToFHIRDiagnosticReport_shouldReturnDiagnosticReportObject(){
+    public void convertMRRTToFHIRDiagnosticReport_shouldReturnDiagnosticReportObject() throws IOException, SQLException {
         MRRTToFHIRService mrrtToFHIRService = Context.getService(MRRTToFHIRService.class);
         MRRTTemplateService mrrtTemplateService = Context.getService(MRRTTemplateService.class);
         Map<String,String> xPathMappings = getXPathMappings();
-        System.out.println("" + mrrtTemplateService.getAll().size());
+        System.out.println("" + mrrtTemplateService.clobToString(mrrtTemplateService.getAll().get(0).getXml()));
         try {
-            DiagnosticReport diagnosticReport = mrrtToFHIRService.convertMRRTToFHIRViaXPath(mrrtTemplateService.getAll().get(1), xPathMappings);
+            DiagnosticReport diagnosticReport = mrrtToFHIRService.convertMRRTToFHIRViaXPath(mrrtTemplateService.getAll().get(0), xPathMappings);
             assertNotNull("Diagnostic Report was null",diagnosticReport);
             System.out.println("Id : " + diagnosticReport.getId().getIdPart().toString());
             System.out.println("Status : " + diagnosticReport.getStatus());
@@ -509,5 +509,183 @@ public class MRRTToFHIRServiceTest extends BaseModuleContextSensitiveTest{
         xml = new SerialClob(chestXRayString.toCharArray());
         chestXRay.setXml(xml);
         chestXRayEncounterUUID = mrrtTemplateService.create(chestXRay);
+
+        MRRTTemplate MRNeck = new MRRTTemplate();
+        String mrNeckString = "<!DOCTYPE html>\n" +
+                "<html>\n" +
+                "<head>\n" +
+                "<meta charset='UTF-8'/>\n" +
+                "<meta content='MR Neck' name='dcterms.title'/>\n" +
+                "<meta content='MR Neck template :: Authored by Phillips CD, et al.' name='dcterms.description'/>\n" +
+                "<meta content='http://www.radreport.org/template/0000061' name='dcterms.identifier'/>\n" +
+                "<meta content='en' name='dcterms.language'/>\n" +
+                "<meta content='IMAGE_REPORT_TEMPLATE' name='dcterms.type'/>\n" +
+                "<meta content='Radiological Society of North America (RSNA)' name='dcterms.publisher'/>\n" +
+                "<meta content='May be used gratis, subject to license agreement' name='dcterms.rights'/>\n" +
+                "<meta content='http://www.radreport.org/license.pdf' name='dcterms.license'/>\n" +
+                "<meta content='2012-03-28' name='dcterms.date'/>\n" +
+                "<meta content='Phillips CD, et al.' name='dcterms.creator'/>\n" +
+                "<meta content='Hong Y [coder]' name='dcterms.contributor'/>\n" +
+                "<meta content='Kahn CE Jr [editor]' name='dcterms.contributor'/>\n" +
+                "<meta content='American Society of Neuroradiology (ASNR)' name='dcterms.contributor'/>\n" +
+                "<link rel='stylesheet' type='text/css' href='IHE_Template_Style.css'/>\n" +
+                "<!-- The absolute link to the CSS file is http://www.radreport.org/html/IHE_Template_Style.css -->\n" +
+                "<script type='text/xml'>\n" +
+                "<!--\n" +
+                "<template_attributes>\n" +
+                "<top-level-flag>true</top-level-flag>\n" +
+                "<status>ACTIVE</status>\n" +
+                "<coding_schemes>\n" +
+                " <coding_scheme name='RadLex' designator='2.16.840.1.113883.6.256' />\n" +
+                " <coding_scheme name='SNOMEDCT' designator='2.16.840.1.113883.6.96' />\n" +
+                " <coding_scheme name='LOINC' designator='2.16.840.1.113883.6.1' />\n" +
+                "</coding_schemes>\n" +
+                "<term>\n" +
+                " <code meaning='magnetic resonance imaging' value='RID10312' scheme='RadLex'/>\n" +
+                "</term>\n" +
+                "<term>\n" +
+                " <code meaning='neck' value='RID7488' scheme='RadLex'/>\n" +
+                "</term>\n" +
+                "<coded_content>\n" +
+                "<entry ORIGTXT='T61_2'>\n" +
+                " <term>\n" +
+                "  <code meaning='procedure' value='RID1559' scheme='RadLex'/>\n" +
+                " </term>\n" +
+                "</entry>\n" +
+                "<entry ORIGTXT='T61_3'>\n" +
+                " <term>\n" +
+                "  <code meaning='magnetic resonance imaging' value='RID10312' scheme='RadLex'/>\n" +
+                " </term>\n" +
+                "</entry>\n" +
+                "<entry ORIGTXT='T61_4'>\n" +
+                " <term>\n" +
+                "  <code meaning='neck' value='RID7488' scheme='RadLex'/>\n" +
+                " </term>\n" +
+                "</entry>\n" +
+                "<entry ORIGTXT='T61_7'>\n" +
+                " <term>\n" +
+                "  <code meaning='comparison' value='RID28483' scheme='RadLex'/>\n" +
+                " </term>\n" +
+                "</entry>\n" +
+                "<entry ORIGTXT='T61_13'>\n" +
+                " <term>\n" +
+                "  <code meaning='normal' value='RID13173' scheme='RadLex'/>\n" +
+                " </term>\n" +
+                "</entry>\n" +
+                "<entry ORIGTXT='T61_15'>\n" +
+                " <term>\n" +
+                "  <code meaning='normal' value='RID13173' scheme='RadLex'/>\n" +
+                " </term>\n" +
+                "</entry>\n" +
+                "<entry ORIGTXT='T61_25'>\n" +
+                " <term>\n" +
+                "  <code meaning='normal' value='RID13173' scheme='RadLex'/>\n" +
+                " </term>\n" +
+                "</entry>\n" +
+                "<entry ORIGTXT='T61_33'>\n" +
+                " <term>\n" +
+                "  <code meaning='normal' value='RID13173' scheme='RadLex'/>\n" +
+                " </term>\n" +
+                "</entry>\n" +
+                "<entry ORIGTXT='T61_35'>\n" +
+                " <term>\n" +
+                "  <code meaning='normal' value='RID13173' scheme='RadLex'/>\n" +
+                " </term>\n" +
+                "</entry>\n" +
+                "<entry ORIGTXT='T61_41'>\n" +
+                " <term>\n" +
+                "  <code meaning='normal' value='RID13173' scheme='RadLex'/>\n" +
+                " </term>\n" +
+                "</entry>\n" +
+                "<entry ORIGTXT='T61_43'>\n" +
+                " <term>\n" +
+                "  <code meaning='normal' value='RID13173' scheme='RadLex'/>\n" +
+                " </term>\n" +
+                "</entry>\n" +
+                "<entry ORIGTXT='T61_44'>\n" +
+                " <term>\n" +
+                "  <code meaning='lymph node group' value='RID28847' scheme='RadLex'/>\n" +
+                " </term>\n" +
+                "</entry>\n" +
+                "<entry ORIGTXT='T61_45'>\n" +
+                " <term>\n" +
+                "  <code meaning='normal' value='RID13173' scheme='RadLex'/>\n" +
+                " </term>\n" +
+                "</entry>\n" +
+                "</coded_content>\n" +
+                "</template_attributes>\n" +
+                "-->\n" +
+                "</script>\n" +
+                "<title>MR Neck</title>\n" +
+                "</head>\n" +
+                "<body>\n" +
+                "<section data-section-name='Procedure'>\n" +
+                "<header class='level1'>MR Neck</header>\n" +
+                "<p>\n" +
+                "<textarea id='T61_2' name='Procedure'> </textarea>\n" +
+                "</p>\n" +
+                "</section>\n" +
+                "<section data-section-name='Clinical information'>\n" +
+                "<header class='level1'>Clinical information</header>\n" +
+                "<p>\n" +
+                "<textarea id='T61_3' name='Clinical information'> </textarea>\n" +
+                "</p>\n" +
+                "</section>\n" +
+                "<section data-section-name='Comparison'>\n" +
+                "<header class='level1'>Comparison</header>\n" +
+                "<p>\n" +
+                "<textarea id='T61_4' name='Comparison'>None. </textarea>\n" +
+                "</p>\n" +
+                "</section>\n" +
+                "<section data-section-name='Findings'>\n" +
+                "<header class='level1'>Findings</header>\n" +
+                "<p>\n" +
+                "<label for='T61_7'>Orbits, paranasal sinuses, and skull base: </label>\n" +
+                "<input type='text' id='T61_7' name='Orbits paranasal sinuses skull base' value='Normal. '/>\n" +
+                "</p>\n" +
+                "<p>\n" +
+                "<label for='T61_13'>Nasopharynx: </label>\n" +
+                "<input type='text' id='T61_13' name='Nasopharynx' value='Normal. '/>\n" +
+                "</p>\n" +
+                "<p>\n" +
+                "<label for='T61_15'>Suprahyoid neck: </label>\n" +
+                "<input type='text' id='T61_15' name='Suprahyoid neck' value='Normal oropharynx, oral cavity, parapharyngeal space, and retropharyngeal space. '/>\n" +
+                "</p>\n" +
+                "<p>\n" +
+                "<label for='T61_25'>Infrahyoid neck: </label>\n" +
+                "<input type='text' id='T61_25' name='Infrahyoid neck' value='Normal larynx, hypopharynx, and supraglottis. '/>\n" +
+                "</p>\n" +
+                "<p>\n" +
+                "<label for='T61_33'>Thyroid: </label>\n" +
+                "<input type='text' id='T61_33' name='Thyroid' value='Normal. '/>\n" +
+                "</p>\n" +
+                "<p>\n" +
+                "<label for='T61_35'>Thoracic inlet: </label>\n" +
+                "<input type='text' id='T61_35' name='Thoracic inlet' value='Normal lung apices and brachial plexus.'/>\n" +
+                "</p>\n" +
+                "<p>\n" +
+                "<label for='T61_41'>Lymph nodes: </label>\n" +
+                "<input type='text' id='T61_41' name='Lymph nodes' value='Normal. No lymphadenopathy. '/>\n" +
+                "</p>\n" +
+                "<p>\n" +
+                "<label for='T61_43'>Vascular structures: </label>\n" +
+                "<input type='text' id='T61_43' name='Vascular structures' value='Normal. '/>\n" +
+                "</p>\n" +
+                "<p>\n" +
+                "<label for='T61_44'>Other findings: </label>\n" +
+                "<input type='text' id='T61_44' name='Other findings' value='None. '/>\n" +
+                "</p>\n" +
+                "</section>\n" +
+                "<section data-section-name='Impression'>\n" +
+                "<header class='level1'>Impression</header>\n" +
+                "<p>\n" +
+                "<textarea id='T61_45' name='Impression'>Normal examination. </textarea>\n" +
+                "</p>\n" +
+                "</section>\n" +
+                "</body>\n" +
+                "</html>";
+        xml = new SerialClob(cardiacMRIString.toCharArray());
+        MRNeck.setXml(xml);
+        cardiacMRIEncounterUUID = mrrtTemplateService.create(MRNeck);
     }
 }

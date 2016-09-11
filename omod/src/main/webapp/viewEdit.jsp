@@ -17,8 +17,11 @@
     }
 </style>
 <script>
+    var editorDOMElement;
     $(document).ready(function () {
-        $("button").click(function () {
+        editorDOMElement = editor.getWrapperElement();
+        //$(editorDOMElement).hide();
+        $("#delete").click(function () {
             var pageUrl = window.location.href;
             alert("Are you sure you want to delete this template??");
                        $.ajax({
@@ -35,7 +38,6 @@
 
 
 <h2><openmrs:message code="radiologyfhirsupport.mrrt.viewEdit"/></h2>
-
 <form:form modelAttribute="template">
 <form:errors path="*" cssClass="errorblock" element="div"/>
 <form:hidden path="id"/>
@@ -45,20 +47,39 @@
         <td><form:input path="name"/></td>
         <td><form:errors path="name" cssClass="error"/></td>
     </tr>
+
     <tr>
-        <td>XML</td>
-        <td><textarea name="xml" id = "editor" rows="20" cols="50"></textarea></td>
+        <td>Report</td>
+        <td id="report"></td>
+    </tr>
+<%--    <tr>
+        <td><button id="showCodeWindow">Show XML</button></td>
+        <td><button id="hideCodeWindow">Hide XML</button></td>
+    </tr>--%>
+    <tr>
+            <td>XML</td>
+            <td><textarea name="xml" id = "editor" rows="20" cols="50"></textarea></td>
         <%--<td><form:errors path="
         .+xml" cssClass="error"/></td>--%>
     </tr>
 </table>
 <input type="submit" value="Save Changes" formmethod="post" />
-<button>Delete</button>
+<button id="delete">Delete</button>
 </form:form>
+<%--<script>
+    $("#hideCodeWindow").click(function () {
+        $(editorDOMElement).hide(1000);
+    });
+    $("#showCodeWindow").click(function () {
+        $(editorDOMElement).show(1000);
+    })
+</script>--%>
 <script>
     var editor = document.getElementById('editor');
     var xml = "${xml}";
     editor.value+= xml;
+    var report = document.getElementById('report');
+    report.innerHTML = xml;
 </script>
 <script>
     var editor = CodeMirror.fromTextArea(document.getElementById("editor"), {
@@ -66,6 +87,40 @@
         mode:  "xml"
     });
 </script>
+<script>
+    function getHTML(target){
+        var wrap = document.createElement('div');
+        wrap.appendChild(target.cloneNode(true));
+        return wrap.innerHTML;
+    }
+    var lastEventObject;
+    var oldString,newString;
+    var inputs = document.getElementsByTagName('input');
+    $('input').change(function (eventObject) {
+        lastEventObject = eventObject;
+        var target = eventObject.target;
+        //alert(getHTML(eventObject.target));
+        //alert("Form changed");
+        switch (target.type) {
+            case "text":
+                //alert("text box found");
+                //console.log("New value : " + target.value)
+                oldString = getHTML(eventObject.target).replace(/"/g, '\'').slice(0,-1);
+                target.setAttribute("value",target.value)
+                newString = getHTML(target).replace(/"/g, '\'').slice(0,-1);
+                xml = editor.getValue();
+                xml  = xml.replace(oldString,newString);
+                //console.log(xml)
+                break;
+            default:
+
+        }
+        editor.getDoc().setValue(xml);
+        editor.refresh();
+    });
+
+</script>
+
 
 
 <%@ include file="/WEB-INF/template/footer.jsp" %>
