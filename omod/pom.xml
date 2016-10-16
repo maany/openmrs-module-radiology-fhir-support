@@ -14,15 +14,6 @@
 	<description>OMOD project for RadiologyFHIRSupport</description>
 
 	<dependencies>
-
-		<!-- 
-		Add other dependencies from parent's pom: 
-		<dependency> 
-			<groupId>org.other.library</groupId> 
-			<artifactId>library-name</artifactId> 
-		</dependency> 
-		-->
-		
 		<!-- Begin OpenMRS modules -->
 		
 		<dependency>
@@ -35,9 +26,9 @@
 		<dependency>
 
 			<groupId>org.openmrs.module</groupId>
-						
+
 			<artifactId>fhir-api</artifactId>
-												
+
 		</dependency>
 						
 		<!-- End OpenMRS modules -->
@@ -206,7 +197,93 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>io.fabric8</groupId>
+				<artifactId>docker-maven-plugin</artifactId>
+				<configuration>
+					<logDate>default</logDate>
+					<autoPull>true</autoPull>
+					<verbose>true</verbose>
+					<images>
+						<!-- DB Image is used 'as-is' and is linked into the openmrs image -->
+						<image>
+							<alias>${mysql.image.alias}</alias>
+							<name>${mysql.image.name}</name>
+							<run>
+								<log>
+									<prefix>DB</prefix>
+									<color>yellow</color>
+								</log>
+								<ports>
+									<port>3306:3306</port>
+								</ports>
+								<env>
+									<MYSQL_ROOT_PASSWORD>${mysql.root.password}</MYSQL_ROOT_PASSWORD>
+									<MYSQL_USER>${mysql.user}</MYSQL_USER>
+									<MYSQL_PASSWORD>${mysql.password}</MYSQL_PASSWORD>
+									<MYSQL_DATABASE>${mysql.database}</MYSQL_DATABASE>
+								</env>
+								<wait>
+									<log>MySQL init process done. Ready for start up.</log>
+									<time>600000</time>
+								</wait>
+							</run>
+						</image>
+						<!-- Image holding the artifact of this build -->
+						<image>
+							<alias>${radiology.fhir.support.image.alias}</alias>
+							<name>${radiology.image.name}</name>
+							<build>
+								<dockerFile>Dockerfile</dockerFile>
+								<assembly>
+									<basedir>/</basedir>
+									<descriptor>${basedir}/src/main/assembly.xml</descriptor>
+								</assembly>
+								<ports>
+									<port>8080</port>
+								</ports>
+							</build>
+							<run>
+								<ports>
+									<port>${tomcat.port}:8080</port>
+								</ports>
+								<links>
+									<link>${mysql.image.alias}</link>
+								</links>
+								<env>
+									<MYSQL_USER>${mysql.user}</MYSQL_USER>
+									<MYSQL_PASSWORD>${mysql.password}</MYSQL_PASSWORD>
+									<MYSQL_DATABASE>${mysql.database}</MYSQL_DATABASE>
+									<MYSQL_HOST>${mysql.image.alias}</MYSQL_HOST>
+									<MYSQL_PORT>3306</MYSQL_PORT>
+									<JAVA_OPTS>${tomcat.env.java_opts}</JAVA_OPTS>
+								</env>
+								<wait>
+									<log>Server startup in</log>
+									<time>300000</time>
+								</wait>
+								<log>
+									<prefix>TC</prefix>
+									<color>cyan</color>
+								</log>
+							</run>
+						</image>
+					</images>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
-
+	<properties>
+		<mysql.image.name>teleivo/openmrs-platform-mysql:2.0.0</mysql.image.name>
+		<mysql.image.alias>db</mysql.image.alias>
+		<mysql.root.password>openmrs</mysql.root.password>
+		<mysql.user>openmrs</mysql.user>
+		<mysql.password>openmrs</mysql.password>
+		<mysql.database>openmrs</mysql.database>
+		<radiology.image.name>teleivo/openmrs-module-radiology</radiology.image.name>
+		<radiology.image.alias>radiology</radiology.image.alias>
+		<radiology.fhir.support.image.alias>radiology</radiology.fhir.support.image.alias>
+		<tomcat.port>8080</tomcat.port>
+		<tomcat.env.java_opts>-Dfile.encoding=UTF-8 -server -Xms256m -Xmx768m</tomcat.env.java_opts>
+	</properties>
 </project>
