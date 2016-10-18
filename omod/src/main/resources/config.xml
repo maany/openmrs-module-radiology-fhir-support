@@ -35,6 +35,11 @@
 		<point>org.openmrs.admin.list</point>
 		<class>${project.parent.groupId}.${project.parent.artifactId}.extension.html.AdminList</class>
 	</extension>
+	<!--Add tab in Patient Dashboard-->
+	<extension>
+		<point>org.openmrs.patientDashboard.afterLastEncounter</point>
+		<class>${project.parent.groupId}.${project.parent.artifactId}.extension.html.PatientDashboardTabExt</class>
+	</extension>
 	
 	<!-- Maps hibernate file's, if present -->
 	<mappingFiles>
