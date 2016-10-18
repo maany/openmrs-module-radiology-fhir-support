@@ -37,8 +37,8 @@
 	</extension>
 	<!--Add tab in Patient Dashboard-->
 	<extension>
-		<point>org.openmrs.patientDashboard.afterLastEncounter</point>
-		<class>${project.parent.groupId}.${project.parent.artifactId}.extension.html.PatientDashboardTabExt</class>
+		<point>org.openmrs.patientDashboardTab</point>
+		<class>${project.parent.groupId}.${project.parent.artifactId}.extension.html.PatientDashboardRadiologyFHIRSupportTabExt</class>
 	</extension>
 	
 	<!-- Maps hibernate file's, if present -->
