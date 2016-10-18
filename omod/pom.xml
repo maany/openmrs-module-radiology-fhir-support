@@ -274,15 +274,15 @@
 		</plugins>
 	</build>
 	<properties>
-		<mysql.image.name>teleivo/openmrs-platform-mysql:2.0.0</mysql.image.name>
+		<mysql.image.name>maany/openmrs-platform-mysql:1.11.4</mysql.image.name>
 		<mysql.image.alias>db</mysql.image.alias>
 		<mysql.root.password>openmrs</mysql.root.password>
 		<mysql.user>openmrs</mysql.user>
 		<mysql.password>openmrs</mysql.password>
 		<mysql.database>openmrs</mysql.database>
-		<radiology.image.name>teleivo/openmrs-module-radiology</radiology.image.name>
-		<radiology.image.alias>radiology</radiology.image.alias>
-		<radiology.fhir.support.image.alias>radiology</radiology.fhir.support.image.alias>
+		<radiology.image.name>maany/openmrs-module-radiology-fhir-support</radiology.image.name>
+		<radiology.image.alias>radiology-fhir-support</radiology.image.alias>
+		<radiology.fhir.support.image.alias>radiology-fhir-support</radiology.fhir.support.image.alias>
 		<tomcat.port>8080</tomcat.port>
 		<tomcat.env.java_opts>-Dfile.encoding=UTF-8 -server -Xms256m -Xmx768m</tomcat.env.java_opts>
 	</properties>
