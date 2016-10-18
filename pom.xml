@@ -51,11 +51,8 @@
 			<dependency>
 			
 				<groupId>org.openmrs.module</groupId>
-												
 				<artifactId>fhir-api</artifactId>
-																								
 				<version>${fhirModuleVersion}</version>
-												
 				<scope>provided</scope>
 				
 			</dependency>
