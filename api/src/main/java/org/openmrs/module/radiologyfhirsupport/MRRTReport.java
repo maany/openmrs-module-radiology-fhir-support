@@ -23,7 +23,7 @@ public class MRRTReport extends BaseOpenmrsObject{
     private MRRTTemplate mrrtTemplate;
 
     @JoinColumn(name = "encounter")
-    @OneToOne()
+    @ManyToOne(fetch = FetchType.EAGER)
     public Encounter encounter;
 
     // TODO this field would be replaced by changesets in future implementations

@@ -41,10 +41,54 @@
         <addForeignKeyConstraint baseTableName="radiology_mrrt_template" baseColumnNames="encounter_uuid"
                                  constraintName="radfhir_encounter_fk" referencedTableName="encounter"
                                  referencedColumnNames="uuid"/>
-        </changeSet>
+    </changeSet>
+
     <changeSet id="radfhir-190620161715" author="maany">
         <addColumn tableName="radiology_mrrt_template">
             <column name="name" type="varchar(256)"></column>
         </addColumn>
+    </changeSet>
+
+    <changeSet id="radfhir-271020161748" author="maany">
+        <createTable tableName="radiology_mrrt_report">
+            <column name="id" type="integer" autoIncrement="true">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="xml" type="CLOB">
+                <constraints nullable="false"/>
+            </column>
+            <!--Column to store reference to the encounter table-->
+            <column name="encounter" type="integer"></column>
+            <!--Column to store reference to MRRT Template-->
+            <column name="mrrt_template" type="integer"></column>
+            <!--Column from BaseOpenMRSObject-->
+            <column name="uuid" type="varchar(38)"></column>
+            <column name="creator" type="integer"></column>
+            <column name="date_created" type="datetime"></column>
+            <column name="changed_by" type="integer"></column>
+            <column name="date_changed" type="datetime"></column>
+            <column name="voided" type="Boolean"></column>
+            <column name="date_voided" type="datetime"></column>
+            <column name="void_reason" type="varchar(1023)"></column>
+            <column name="voided_by" type="int"></column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="radiology_mrrt_report" baseColumnNames="encounter"
+                                 constraintName="radfhir_report_encounter_fk" referencedTableName="encounter"
+                                 referencedColumnNames="encounter_id"/>
+        <addForeignKeyConstraint baseTableName="radiology_mrrt_report" baseColumnNames="mrrt_template"
+                                 constraintName="radfhir_report_mrrt_template_fk" referencedTableName="radiology_mrrt_template"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="radiology_mrrt_report" baseColumnNames="voided_by"
+                                 constraintName="radfhir_report_voided_by_user_fk" referencedTableName="users"
+                                 referencedColumnNames="user_id"/>
+        <addForeignKeyConstraint baseTableName="radiology_mrrt_report" baseColumnNames="changed_by"
+                                 constraintName="radfhir_report_changed_by_user_fk" referencedTableName="users"
+                                 referencedColumnNames="user_id"/>
+        <addForeignKeyConstraint baseTableName="radiology_mrrt_report" baseColumnNames="creator"
+                                 constraintName="radfhir_report_creator_fk" referencedTableName="users"
+                                 referencedColumnNames="user_id"/>
+        <addForeignKeyConstraint baseTableName="radiology_mrrt_report" baseColumnNames="encounter_uuid"
+                                 constraintName="radfhir_report_encounter_fk" referencedTableName="encounter"
+                                 referencedColumnNames="uuid"/>
     </changeSet>
 </databaseChangeLog>
