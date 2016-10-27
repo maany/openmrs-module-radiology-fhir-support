@@ -2,6 +2,7 @@ package org.openmrs.module.radiologyfhirsupport.api.impl;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Encounter;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.radiologyfhirsupport.MRRTReport;
 import org.openmrs.module.radiologyfhirsupport.api.MRRTReportService;
@@ -50,6 +51,11 @@ public class MRRTReportServiceImpl extends BaseOpenmrsService implements MRRTRep
     @Transactional(readOnly = true)
     public MRRTReport getByEncounterUUID(String encounterUUID) {
         return dao.getByEncounterUUID(encounterUUID);
+    }
+
+    @Override
+    public MRRTReport getByEncounter(Encounter encounter) {
+        return dao.getByEncounter(encounter);
     }
 
     @Override

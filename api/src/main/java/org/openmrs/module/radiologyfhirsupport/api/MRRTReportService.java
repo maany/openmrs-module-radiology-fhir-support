@@ -1,5 +1,6 @@
 package org.openmrs.module.radiologyfhirsupport.api;
 
+import org.openmrs.Encounter;
 import org.openmrs.module.radiologyfhirsupport.MRRTReport;
 
 import java.util.List;
@@ -31,6 +32,13 @@ public interface MRRTReportService {
      * @return
      */
     MRRTReport getByEncounterUUID(String encounterUUID);
+
+    /**
+     *
+     * @param encounter
+     * @return
+     */
+    MRRTReport getByEncounter(Encounter encounter);
     /**
      *
      * @param report

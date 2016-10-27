@@ -1,19 +1,27 @@
 package org.openmrs.module.radiologyfhirsupport.api;
 
+import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.openmrs.Encounter;
+import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
 import org.openmrs.messagesource.MessageSourceService;
-import org.openmrs.module.fhir.api.EncounterService;
 import org.openmrs.module.radiologyfhirsupport.MRRTReport;
 import org.openmrs.module.radiologyfhirsupport.MRRTTemplate;
 import org.openmrs.module.radiologyfhirsupport.RadiologyFHIRSupportActivator;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 
 import javax.sql.rowset.serial.SerialClob;
+import java.io.IOException;
 import java.sql.Clob;
 import java.sql.SQLException;
+import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Created by devmaany on 27/10/16.
@@ -37,7 +45,53 @@ public class MRRTReportServiceTest extends BaseModuleContextSensitiveTest {
             e.printStackTrace();
         }
     }
-
+    /**
+     * Test if the demo data is loaded correctly for the other tests to run correctly.
+     * By default, this means, {@link MRRTTemplateService#create(MRRTTemplate)}, {@link MRRTTemplateService#saveOrUpdate(MRRTTemplate)}, {@link MRRTTemplateService#getAll()} work fine and need not to tested separately
+     */
+    @Test
+    public void testDemoData(){
+        MRRTReportService mrrtReportService = getService();
+        MRRTTemplateService mrrtTemplateService = Context.getService(MRRTTemplateService.class);
+        List<MRRTReport> reports = mrrtReportService.getAll();
+        assertNotNull(reports);
+        for(MRRTReport report: reports){
+            logger.log(Level.INFO,"Report ID {0}", new Object[]{report.getId()});
+            try {
+                logger.log(Level.INFO,"Report XML : \n {0}", new Object[]{mrrtTemplateService.clobToString(report.getXml())});
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        Assert.assertEquals(2,reports.size());
+        logger.log(Level.CONFIG,"Test Data Configured Properly");
+    }
+    @Test
+    public void getById_shouldReturnMRRTReportById(){
+        Assert.assertNotNull(getService().getById(1));
+    }
+    @Test
+    public void getByEncounterUuid_ShouldReturnMRRTReportByEncounterUuid(){
+        MRRTReport report = getService().getByEncounterUUID(cardiacMRIEncounterUUID);
+        Assert.assertNotNull(report);
+    }
+    @Test
+    public void getByEncounter_ShouldReturnMRRTReportByEncounter(){
+        Encounter encounter = Context.getService(EncounterService.class).getEncounterByUuid(cardiacMRIEncounterUUID);
+        MRRTReport report = getService().getByEncounter(encounter);
+        Assert.assertNotNull(report);
+    }
+    @Test
+    public void deleteById_ShouldDeleteMRRTReport(){
+        List<MRRTReport> reports = getService().getAll();
+        int sizeInitial= reports.size();
+        getService().delete(reports.get(0));
+        reports = getService().getAll();
+        int sizeFinal = reports.size();
+        Assert.assertEquals(sizeInitial,sizeFinal+1);
+    }
     /*
      * Utility Methods for this Test class
      */
@@ -51,14 +105,16 @@ public class MRRTReportServiceTest extends BaseModuleContextSensitiveTest {
         Encounter cardiacMRIEncounter = Context.getService(org.openmrs.api.EncounterService.class).getEncounterByUuid(cardiacMRIEncounterUUID);
         cardiacMRIReport.setMrrtTemplate(cardiacMRITemplate);
         cardiacMRIReport.setEncounter(cardiacMRIEncounter);
-        getService().saveOrUpdate(cardiacMRIReport);
+        cardiacMRIReport.setXml(cardiacMRITemplate.getXml());
+        getService().create(cardiacMRIReport);
 
         MRRTReport chestXRayReport = new MRRTReport();
         MRRTTemplate chestXRayTemplate = Context.getService(MRRTTemplateService.class).getByEncounterUUID(chestXRayEncounterUUID);
         Encounter chestXRayEncounter = Context.getService(org.openmrs.api.EncounterService.class).getEncounterByUuid(chestXRayEncounterUUID);
         chestXRayReport.setMrrtTemplate(chestXRayTemplate);
         chestXRayReport.setEncounter(chestXRayEncounter);
-        getService().saveOrUpdate(cardiacMRIReport);
+        chestXRayReport.setXml(chestXRayTemplate.getXml());
+        getService().saveOrUpdate(chestXRayReport);
     }
     void loadMRRTTemplates() throws SQLException {
         MRRTTemplateService mrrtTemplateService = Context.getService(MRRTTemplateService.class);
