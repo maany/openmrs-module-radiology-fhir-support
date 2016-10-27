@@ -24,7 +24,7 @@ public class MRRTReport extends BaseOpenmrsObject{
 
     @JoinColumn(name = "encounter")
     @OneToOne()
-    private Encounter encounter;
+    public Encounter encounter;
 
     // TODO this field would be replaced by changesets in future implementations
     @Lob
