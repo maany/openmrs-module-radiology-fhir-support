@@ -58,7 +58,7 @@
                 <constraints nullable="false"/>
             </column>
             <!--Column to store reference to the encounter table-->
-            <column name="encounter" type="integer"></column>
+            <column name="encounter" type="integer"/>
             <!--Column to store reference to MRRT Template-->
             <column name="mrrt_template" type="integer"></column>
             <!--Column from BaseOpenMRSObject-->

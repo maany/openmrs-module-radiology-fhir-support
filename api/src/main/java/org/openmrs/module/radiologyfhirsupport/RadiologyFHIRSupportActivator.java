@@ -126,6 +126,10 @@ public class RadiologyFHIRSupportActivator implements ModuleActivator {
 		if(addDemoPatient.equals("true")){
 			addDemoPatient(messageSourceService);
 		}
+		String addDemoMRRTReports = messageSourceService.getMessage("radiologyfhirsupport.addDemoMRRTReports");
+		if(addDemoMRRTReports.equals("true")){
+			addDemoMRRTReports(messageSourceService);
+		}
 	}
 
 	public void addDemoPatient(MessageSourceService messageSourceService){
@@ -264,6 +268,9 @@ public class RadiologyFHIRSupportActivator implements ModuleActivator {
 		} else {
 			logger.log(Level.INFO,"Encounter Provider was already registered with Identifier : " + providerIdentifier);
 		}
+	}
+	public void addDemoMRRTReports(MessageSourceService messageSourceService){
+
 	}
 	private void debugClassPath(){
 		ClassLoader cl = ClassLoader.getSystemClassLoader();
