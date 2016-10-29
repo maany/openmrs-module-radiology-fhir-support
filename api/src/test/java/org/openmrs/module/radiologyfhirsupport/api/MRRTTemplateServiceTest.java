@@ -85,8 +85,10 @@ public class MRRTTemplateServiceTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void getById_shouldGetMRRTTemplateById(){
 		MRRTTemplateService mrrtTemplateService = getService();
-		MRRTTemplate template = mrrtTemplateService.getById(1);
+		MRRTTemplate template = mrrtTemplateService.getById(mrrtTemplateService.getAll().get(0).getId());
+		System.out.println("Template details : " + template.encounterUuid);
 		assertNotNull(template);
+
 	}
 
 	@Test

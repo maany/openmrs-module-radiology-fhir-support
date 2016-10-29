@@ -70,7 +70,7 @@ public class MRRTReportServiceTest extends BaseModuleContextSensitiveTest {
     }
     @Test
     public void getById_shouldReturnMRRTReportById(){
-        Assert.assertNotNull(getService().getById(1));
+        Assert.assertNotNull(getService().getById(getService().getAll().get(0).getId()));
     }
     @Test
     public void getByEncounterUuid_ShouldReturnMRRTReportByEncounterUuid(){
