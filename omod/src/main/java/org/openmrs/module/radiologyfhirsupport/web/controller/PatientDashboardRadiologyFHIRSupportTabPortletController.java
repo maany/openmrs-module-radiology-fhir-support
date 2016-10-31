@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -35,17 +36,19 @@ public class PatientDashboardRadiologyFHIRSupportTabPortletController extends Po
 
         Integer patientId = Integer.parseInt(request.getParameter("patientId"));
         Patient patient = patientService.getPatient(patientId);
-
+        System.out.println("Patient Name : " + patient.getGivenName());
         List<Encounter> encountersByPatient = encounterService.getEncountersByPatient(patient);
-
+        System.out.println("Enouncters by Patient : " + Arrays.toString(encountersByPatient.toArray()));
         List<MRRTReport> existingReports = new ArrayList<MRRTReport>();
+        String mrrtEncounterType = Context.getMessageSourceService().getMessage("radiologyfhirsupport.encounterType");
         for(Encounter encounter: encountersByPatient){
-            MRRTReport report = mrrtReportService.getByEncounter(encounter);
-            if(report!=null)
+            if(encounter.getEncounterType().getName().equals(mrrtEncounterType)) {
+                MRRTReport report = mrrtReportService.getByEncounter(encounter);
                 existingReports.add(report);
+            }
         }
-
         List<MRRTTemplate> mrrtTemplates = mrrtTemplateService.getAll();
+        System.out.println("templates: " + Arrays.toString(mrrtTemplates.toArray()));
 
         model.put("reports",existingReports);
         model.put("templates",mrrtTemplates);

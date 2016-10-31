@@ -195,20 +195,20 @@ public class RadiologyFHIRSupportActivator implements ModuleActivator {
 
 	}
 	public void registerEncounterType(MessageSourceService messageSourceService){
-		String mrrtTemplateHandlerName = messageSourceService.getMessage("radiologyfhirsupport.handlerName");
-		String mrrtTemplateHandlerDescription = messageSourceService.getMessage("radiologyfhirsupport.handlerDescription");
-		if(Context.getEncounterService().getEncounterType(mrrtTemplateHandlerName)==null) {
-			logger.log(Level.INFO,"Registering a new EncounterType for MRRTTemplates. This will be used for lookup by FHIR module : " + mrrtTemplateHandlerDescription);
+		String encounterTypeNameString = messageSourceService.getMessage("radiologyfhirsupport.encounterType");
+		String encounterTypeDescription = messageSourceService.getMessage("radiologyfhirsupport.encounterTypeDescription");
+		if(Context.getEncounterService().getEncounterType(encounterTypeNameString)==null) {
+			logger.log(Level.INFO,"Registering a new EncounterType for MRRTTemplates. This will be used for lookup by FHIR module : " + encounterTypeNameString);
 
 			EncounterType mrrtFhirEncounterType = new EncounterType();
-			mrrtFhirEncounterType.setName(mrrtTemplateHandlerName);
-			mrrtFhirEncounterType.setDescription(mrrtTemplateHandlerDescription);
+			mrrtFhirEncounterType.setName(encounterTypeNameString);
+			mrrtFhirEncounterType.setDescription(encounterTypeDescription);
 			mrrtFhirEncounterType.setCreator(Context.getAuthenticatedUser());
 			mrrtFhirEncounterType.setDateCreated(new Date());
 			mrrtFhirEncounterType.setRetired(false);
 			Context.getEncounterService().saveEncounterType(mrrtFhirEncounterType);
 		} else {
-			logger.log(Level.INFO,"EncounterType for MRRTTemplates was already registered. This will be used for lookup by FHIR module : " + mrrtTemplateHandlerDescription);
+			logger.log(Level.INFO,"EncounterType for MRRTTemplates was already registered. This will be used for lookup by FHIR module : " + encounterTypeNameString);
 		}
 
 	}
