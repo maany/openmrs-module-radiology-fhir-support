@@ -41,15 +41,26 @@ public class PatientDashboardRadiologyFHIRSupportTabPortletController extends Po
         System.out.println("Enouncters by Patient : " + Arrays.toString(encountersByPatient.toArray()));
         List<MRRTReport> existingReports = new ArrayList<MRRTReport>();
         String mrrtEncounterType = Context.getMessageSourceService().getMessage("radiologyfhirsupport.encounterType");
-        for(Encounter encounter: encountersByPatient){
-            if(encounter.getEncounterType().getName().equals(mrrtEncounterType)) {
-                MRRTReport report = mrrtReportService.getByEncounter(encounter);
-                existingReports.add(report);
+        try {
+            for (Encounter encounter : encountersByPatient) {
+                System.out.println("*Found Encounter : " + encounter.getUuid() + " Type : " + encounter.getEncounterType().getName());
+                if (encounter.getEncounterType().getName().equals(mrrtEncounterType)) {
+                    System.out.println("** Encounter Type Matches!!");
+                    MRRTReport report = mrrtReportService.getByEncounterUUID(encounter.getUuid());
+                    existingReports.add(report);
+                }
             }
+        }catch(IndexOutOfBoundsException ex){
+            System.out.println("No MRRT Reports exist for current patient");
+            ex.printStackTrace();
         }
-        List<MRRTTemplate> mrrtTemplates = mrrtTemplateService.getAll();
-        System.out.println("templates: " + Arrays.toString(mrrtTemplates.toArray()));
-
+        List<MRRTTemplate> mrrtTemplates = new ArrayList<MRRTTemplate>();
+        try {
+            mrrtTemplates = mrrtTemplateService.getAll();
+            System.out.println("templates: " + Arrays.toString(mrrtTemplates.toArray()));
+        }catch(Exception ex){
+            ex.printStackTrace();
+        }
         model.put("reports",existingReports);
         model.put("templates",mrrtTemplates);
         model.put("patient",patient);
