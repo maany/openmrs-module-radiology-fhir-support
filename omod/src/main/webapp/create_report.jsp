@@ -66,16 +66,22 @@
         // Select and Option handler
         $('select').on('change', function(eventObject) {
             var target = eventObject.target;
-            oldString = getHTML(target)
+            oldString = getHTML(target).replace(/"/g, '\'')
             var selected = this.value
             removeAttributeSelected(target);
             alert('selecting attribute : ' + selected)
             selectOption(target, selected);
-            newString = getHTML(target);
-            alert(' Oldstring is \n' + oldString.replace(/"/g, '\'') + 'new string is : \n' + newString.replace(/"/g, '\''))
+            newString = getHTML(target).replace(/"/g, '\'');
+            alert(' Oldstring is \n' + oldString + 'new string is : \n' + newString)
             xml = editor.getValue()
             console.log(xml);
-            xml = xml.replace(oldString.slice(0, -1),newString.slice(0,-1))
+            alert('length after split is ' + oldString.split('\n').length)
+            var oldArray = oldString.split('\n');
+            var newArray = newString.split('\n');
+            for(var i=0;i<oldArray.length;i++){
+                alert('Seaching element ' + i + " position : " + xml.search(oldArray[i]))
+                xml = xml.replace(oldArray[i],newArray[i])
+            }
             console.log('**********************************8')
             console.log(xml);
             editor.setValue(xml)
