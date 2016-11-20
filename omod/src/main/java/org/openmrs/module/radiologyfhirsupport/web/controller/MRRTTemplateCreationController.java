@@ -18,7 +18,7 @@ import java.sql.SQLException;
  * Created by devmaany on 22/6/16.
  */
 @Controller
-public class MRRTCreationController {
+public class MRRTTemplateCreationController {
     @RequestMapping(value = "/module/radiologyfhirsupport/template/new.form", method = RequestMethod.GET)
     public String getForm(ModelMap map){
         MRRTTemplate mrrtTemplate = new MRRTTemplate();
@@ -41,7 +41,7 @@ public class MRRTCreationController {
         System.out.println("Data received : " + mrrtTemplate.getName());
         System.out.println("Data received : " + mrrtTemplate.getXml());
         mrrtTemplateService.create(mrrtTemplate);
-        String redirectURL = request.getContextPath() + "/" + CRUDMRRTTemplateFormController.VIEW_EDIT_REQUEST_MAPPING + "view/" + mrrtTemplate.getId() + ".form";
+        String redirectURL = request.getContextPath() + "/" + MRRTTemplateCRUDFormController.VIEW_EDIT_REQUEST_MAPPING + "view/" + mrrtTemplate.getId() + ".form";
         return new ModelAndView(new RedirectView(redirectURL));
     }
 }

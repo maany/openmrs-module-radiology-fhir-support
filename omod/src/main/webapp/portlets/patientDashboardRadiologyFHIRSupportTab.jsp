@@ -23,3 +23,16 @@ Encounters = ${model.encounters}
             </tr>
         </c:forEach>
     </table>
+    <div id="create-report">
+        <form method="get" action="${pageContext.request.contextPath}/module/radiologyfhirsupport/report/new.form">
+            <% %>
+            MRRT Template
+            <select name="templateId">
+                <c:forEach items="${model.templates}" var="template" varStatus="i">
+                    <option value="${template.id}">${template.name}</option>
+                </c:forEach>
+            </select>
+         <%--TODO add location field  --%>
+        <input type="submit" value="Create Report"/>
+        </form>
+    </div>
