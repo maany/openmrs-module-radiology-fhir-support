@@ -30,7 +30,7 @@
 </script>
 
 <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/codemirror/CodeMirror/master/lib/codemirror.css">
-<script type="text/javascript" src="https://cdn.rawgit.com/codemirror/CodeMirror/master/lib/codemirror.js"></script>
+<openmrs:htmlInclude file="/moduleResources/radiologyfhirsupport/codemirror/codemirror.js" />
 <script type="text/javascript" src="https://cdn.rawgit.com/codemirror/CodeMirror/master/mode/xml/xml.js"></script>
 
 
@@ -39,7 +39,7 @@
 <form>
     <table>
         <tr>
-            <td>MRRT Report Name</td>
+            <td>MRRT Template Name</td>
             <td><input type = "text" name="name"/></td>
         </tr>
         <tr>

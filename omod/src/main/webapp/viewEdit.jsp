@@ -43,14 +43,14 @@
 <form:hidden path="id"/>
 <table>
     <tr>
-        <td>MRRT Report Name</td>
+        <td>MRRT Template Name</td>
         <td><form:input path="name"/></td>
         <td><form:errors path="name" cssClass="error"/></td>
     </tr>
 
     <tr>
-        <td>Report</td>
-        <td id="report"></td>
+        <td>Template</td>
+        <td id="template"></td>
     </tr>
 <%--    <tr>
         <td><button id="showCodeWindow">Show XML</button></td>
@@ -78,8 +78,8 @@
     var editor = document.getElementById('editor');
     var xml = "${xml}";
     editor.value+= xml;
-    var report = document.getElementById('report');
-    report.innerHTML = xml;
+    var template = document.getElementById('template');
+    template.innerHTML = xml;
 </script>
 <script>
     var editor = CodeMirror.fromTextArea(document.getElementById("editor"), {

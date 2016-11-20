@@ -17,6 +17,8 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
 
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Date;
 
 import static org.openmrs.api.context.Context.getEncounterService;
@@ -27,13 +29,25 @@ import static org.openmrs.api.context.Context.getEncounterService;
 @Controller
 public class MRRTReportCreationController {
     @RequestMapping(value = "/module/radiologyfhirsupport/report/new.form", method = RequestMethod.GET)
-    public String getForm(ModelMap map, @RequestParam Integer templateId){
+    public ModelAndView getForm(ModelMap map, @RequestParam Integer templateId){
         MRRTReport report = new MRRTReport();
-        MRRTTemplate mrrtTemplate = Context.getService(MRRTTemplateService.class).getById(templateId);
+        MRRTTemplateService mrrtTemplateService = Context.getService(MRRTTemplateService.class);
+        MRRTTemplate mrrtTemplate = mrrtTemplateService.getById(templateId);
+        String xml = "";
+        try {
+            xml = mrrtTemplateService.clobToString(mrrtTemplate.getXml());
+            xml = xml.replaceAll("script","script_mrrt");
+            xml = xml.replaceAll("(\\r|\\n|\\r\\n)+", "\\\\n");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         map.put("report",report);
         map.put("template", mrrtTemplate);
+        map.put("xml",xml );
         System.out.println("This is the report creation controller");
-        return "module/radiologyfhirsupport/create";
+        return new ModelAndView("module/radiologyfhirsupport/create_report");
     }
     @RequestMapping(value = "/module/radiologyfhirsupport/report/new.form", method = RequestMethod.POST)
     public ModelAndView saveReport(HttpServletRequest request, @RequestParam Integer templateId, @RequestParam Integer patientId, @RequestParam Integer locationId, @RequestParam Date date, ModelMap map) {

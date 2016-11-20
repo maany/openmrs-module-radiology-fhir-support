@@ -1,0 +1,63 @@
+<%@ include file="/WEB-INF/template/include.jsp"%>
+<%@ include file="/WEB-INF/template/header.jsp"%>
+
+<%@ include file="template/localHeader.jsp"%>
+
+<style>
+    .error {
+        color: #ff0000;
+    }
+
+    .errorblock {
+        color: #000;
+        background-color: #ffEEEE;
+        border: 3px solid #ff0000;
+        padding: 8px;
+        margin: 16px;
+    }
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/codemirror/CodeMirror/master/lib/codemirror.css"/>
+<openmrs:htmlInclude file="/moduleResources/radiologyfhirsupport/codemirror/codemirror.js" />
+<script type="text/javascript" src="https://cdn.rawgit.com/codemirror/CodeMirror/master/mode/xml/xml.js"></script>
+<script>
+    $(document).ready(function () {
+        var editor = CodeMirror.fromTextArea(document.getElementById("editor"), {
+            lineNumbers: true,
+            mode:  "xml"
+        });
+        var editorContainer = document.getElementById('editor');
+        var report = document.getElementById("report")
+        var xml = "${xml}"
+        editor.setValue(xml);
+        report.innerHTML=xml;
+    });
+</script>
+<h2><openmrs:message code="radiologyfhirsupport.mrrt.report.create"/></h2>
+
+<form>
+    <table>
+        <tr>
+            <td>MRRT Report Name</td>
+            <td><input type = "text" name="name"/></td>
+        </tr>
+        <tr>
+            <td>MRRT Report</td>
+            <td id="report"></td>
+        </tr>
+        <tr>
+            <td>XML</td>
+            <td><textarea name = "xml" id = "editor" path="xml" rows="20" cols="50"></textarea></td>
+                <%--<td><form:errors path="xml" cssClass="error"/></td>--%>
+        </tr>
+    </table>
+    <input type="submit" value="Create Report " formmethod="post" />
+</form>
+
+<script>
+
+
+</script>
+
+
+<%@ include file="/WEB-INF/template/footer.jsp"%>
