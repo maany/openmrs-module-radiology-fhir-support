@@ -69,21 +69,14 @@
             oldString = getHTML(target).replace(/"/g, '\'')
             var selected = this.value
             removeAttributeSelected(target);
-            alert('selecting attribute : ' + selected)
             selectOption(target, selected);
             newString = getHTML(target).replace(/"/g, '\'');
-            alert(' Oldstring is \n' + oldString + 'new string is : \n' + newString)
             xml = editor.getValue()
-            console.log(xml);
-            alert('length after split is ' + oldString.split('\n').length)
             var oldArray = oldString.split('\n');
             var newArray = newString.split('\n');
             for(var i=0;i<oldArray.length;i++){
-                alert('Seaching element ' + i + " position : " + xml.search(oldArray[i]))
                 xml = xml.replace(oldArray[i],newArray[i])
             }
-            console.log('**********************************8')
-            console.log(xml);
             editor.setValue(xml)
             editor.refresh()
         })
