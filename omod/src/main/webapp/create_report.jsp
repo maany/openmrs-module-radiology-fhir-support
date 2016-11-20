@@ -66,10 +66,10 @@
         // Select and Option handler
         $('select').on('change', function(eventObject) {
             var target = eventObject.target;
+            var value = this.value
             oldString = getHTML(target).replace(/"/g, '\'')
-            var selected = this.value
             removeAttributeSelected(target);
-            selectOption(target, selected);
+            selectOption(target, value);
             newString = getHTML(target).replace(/"/g, '\'');
             xml = editor.getValue()
             var oldArray = oldString.split('\n');
@@ -79,6 +79,7 @@
             }
             editor.setValue(xml)
             editor.refresh()
+            $(this).val(value)
         })
 
         function getHTML(target) {
@@ -95,14 +96,10 @@
 
         function selectOption(target, val) {
             $(target).children('option').each(function() {
-                alert('current value : ' + this.value + " and val is " + val + "  ")
                 if (this.value == val) {
-                    alert('match found')
                     $(this).attr('selected', 'selected')
-                    alert("test " + $(this).attr('selected'))
                 }
             })
-            alert(getHTML(target))
         }
 
     });
