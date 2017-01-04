@@ -135,7 +135,7 @@ public class MRRTTemplateServiceImpl extends BaseOpenmrsService implements MRRTT
      */
     private Encounter createOpenmrsEncounter(EncounterService encounterService){
         MessageSourceService messageSourceService = Context.getMessageSourceService();
-        String encounterType = messageSourceService.getMessage("radiologyfhirsupport.handlerName");
+        String encounterType = messageSourceService.getMessage("radiologyfhirsupport.encounterType");
         String saveEncounterTypeError = messageSourceService.getMessage("radiologyfhirsupport.saveEncounterTypeError");
         Encounter encounter = new Encounter();
         log.info("Encounter Type is " + encounterType);
