@@ -40,6 +40,7 @@
         }
         var lastEventObject;
         var oldString,newString;
+
         $('input').change(function (eventObject) {
             lastEventObject = eventObject;
             var target = eventObject.target;
@@ -101,6 +102,16 @@
                 }
             })
         }
+
+        // TextArea sync handler
+        $('textarea').on('change', function(eventObject) {
+            alert("TextArea changed")
+            var target = eventObject.target;
+            var value = this.value
+            oldString = getHTML(target).replace()
+
+        })
+
 
     });
 </script>
