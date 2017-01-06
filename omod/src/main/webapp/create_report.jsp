@@ -46,21 +46,25 @@
             var target = eventObject.target;
             //alert(getHTML(eventObject.target));
             //alert("Form changed");
-            switch (target.type) {
-                case "text":
-                    alert("text box found");
-                    console.log("New value : " + target.value)
-                    oldString = getHTML(eventObject.target).replace(/"/g, '\'').slice(0, -1);
-                    target.setAttribute("value", target.value)
-                    newString = getHTML(target).replace(/"/g, '\'').slice(0, -1);
-                    xml = editor.getValue();
-                    xml = xml.replace(oldString, newString);
-                    console.log(xml)
+            //switch (target.type) {
+            //    case "text":
+            alert("text box found");
+            console.log("New value : " + target.value)
+            oldString = getHTML(eventObject.target).replace(/"/g, '\'').slice(0, -1);
+            target.setAttribute("value", target.value)
+            newString = getHTML(target).replace(/"/g, '\'').slice(0, -1);
+            xml = editor.getValue();
+            xml = xml.replace(oldString, newString);
+            console.log(xml)
+            /*        break;
+                case "date":
+                    alert('date detected')
                     break;
                 default:
-            }
+
             editor.setValue(xml);
             editor.refresh();
+
         })
 
 
