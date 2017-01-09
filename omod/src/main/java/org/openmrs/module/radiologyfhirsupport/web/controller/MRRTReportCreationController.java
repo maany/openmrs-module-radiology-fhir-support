@@ -29,7 +29,7 @@ import static org.openmrs.api.context.Context.getEncounterService;
 @Controller
 public class MRRTReportCreationController {
     @RequestMapping(value = "/module/radiologyfhirsupport/report/new.form", method = RequestMethod.GET)
-    public ModelAndView getForm(ModelMap map, @RequestParam Integer templateId){
+    public ModelAndView getForm(ModelMap map, @RequestParam Integer templateId, @RequestParam Integer patientId){
         MRRTReport report = new MRRTReport();
         MRRTTemplateService mrrtTemplateService = Context.getService(MRRTTemplateService.class);
         MRRTTemplate mrrtTemplate = mrrtTemplateService.getById(templateId);

@@ -1,5 +1,3 @@
-alert('detected sync.js');
-alert('detected sync.js');
 function getHTML(target) {
     var wrap = document.createElement('div');
     wrap.appendChild(target.cloneNode(true));

@@ -32,6 +32,7 @@ Encounters = ${model.encounters}
                     <option value="${template.id}">${template.name}</option>
                 </c:forEach>
             </select>
+            <input type="hidden" name="patientId" value="${patient.id}"/>
          <%--TODO add location field  --%>
         <input type="submit" value="Create Report"/>
         </form>
