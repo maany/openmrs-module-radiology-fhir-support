@@ -43,7 +43,7 @@
             <td><input type = "text" name="name"/></td>
         </tr>
         <tr>
-            <td>XML</td>
+        <td>XML</td>
             <td><textarea name = "xml" id = "editor" path="xml" rows="20" cols="50"></textarea></td>
                 <%--<td><form:errors path="xml" cssClass="error"/></td>--%>
         </tr>

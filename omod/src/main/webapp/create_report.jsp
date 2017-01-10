@@ -18,7 +18,6 @@
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
 <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/codemirror/CodeMirror/master/lib/codemirror.css"/>
-<openmrs:htmlInclude file="/scripts/timepicker/timepicker.js" />
 <openmrs:htmlInclude file="/moduleResources/radiologyfhirsupport/codemirror/codemirror.js" />
 <openmrs:htmlInclude file="/moduleResources/radiologyfhirsupport/js/sync.js" />
 <script type="text/javascript" src="https://cdn.rawgit.com/codemirror/CodeMirror/master/mode/xml/xml.js"></script>
@@ -37,11 +36,19 @@
         </tr>
         <tr>
             <td>Location</td>
-            <td><input type = "text" name="name"/></td>
+            <td>
+                <select name="locationId">
+                    <c:forEach var="location" items="${locations}">
+                        <option value="${location.locationId}"><c:out value="${location.name}"/></option>
+                    </c:forEach>
+                </select>
+            </td>
         </tr>
         <tr>
             <td>Date</td>
-            <td><input type = "datetime-local" name="name"/></td>
+            <td>
+                <input type="datetime-local" name="dateString"/>
+            </td>
         </tr>
         <tr>
             <td>MRRT Report</td>

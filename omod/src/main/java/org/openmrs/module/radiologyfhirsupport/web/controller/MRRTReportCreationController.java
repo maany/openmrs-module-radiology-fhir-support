@@ -3,15 +3,16 @@ package org.openmrs.module.radiologyfhirsupport.web.controller;
 import org.openmrs.*;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.op.In;
+import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.radiologyfhirsupport.MRRTReport;
 import org.openmrs.module.radiologyfhirsupport.MRRTTemplate;
+import org.openmrs.module.radiologyfhirsupport.api.MRRTReportService;
 import org.openmrs.module.radiologyfhirsupport.api.MRRTTemplateService;
+import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.ServletRequestDataBinder;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -19,6 +20,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import static org.openmrs.api.context.Context.getEncounterService;
@@ -46,30 +50,50 @@ public class MRRTReportCreationController {
         map.put("report",report);
         map.put("template", mrrtTemplate);
         map.put("xml",xml );
+        map.put("locations",Context.getLocationService().getAllLocations());
         System.out.println("This is the report creation controller");
         return new ModelAndView("module/radiologyfhirsupport/create_report");
     }
     @RequestMapping(value = "/module/radiologyfhirsupport/report/new.form", method = RequestMethod.POST)
-    public ModelAndView saveReport(HttpServletRequest request, @RequestParam Integer templateId, @RequestParam Integer patientId, @RequestParam Integer locationId, @RequestParam Date date, ModelMap map) {
+    public ModelAndView saveReport(HttpServletRequest request, @RequestParam String name,@RequestParam String xml,@RequestParam Integer templateId, @RequestParam Integer patientId, @RequestParam Integer locationId, @RequestParam String dateString, ModelMap map) throws ParseException {
+        /* Set MRRT Template */
         MRRTTemplate mrrtTemplate = Context.getService(MRRTTemplateService.class).getById(templateId);
+
         Patient patient = Context.getPatientService().getPatient(patientId);
-        //Location location = Context.getLocationService().getLocation(locationId);
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd'T'HH:mm");
+        Date date = dateFormat.parse(dateString);
+        Location location = Context.getLocationService().getLocation(locationId);
         //*****Create Encounter*********//
-
-
+        Encounter encounter = new Encounter();
+        encounter.setPatient(patient);
+        encounter.setLocation(location);
+        encounter.setEncounterDatetime(date);
+        MessageSourceService messageSourceService = Context.getMessageSourceService();
+        String encounterTypeNameString = messageSourceService.getMessage("radiologyfhirsupport.encounterType");
+        String providerIdentifier = messageSourceService.getMessage("radiologyfhirsupport.providerIdentifier");
+        String encounterRoleName = messageSourceService.getMessage("radiologyfhirsupport.encounterRoleName");
+        encounter.setEncounterType(Context.getEncounterService().getEncounterType(encounterTypeNameString));
+        EncounterRole encounterRole = Context.getEncounterService().getEncounterRoleByName(encounterRoleName);
+        Provider provider = Context.getProviderService().getProviderByIdentifier(providerIdentifier);
+        encounter.setProvider(encounterRole, provider);
+        /* XML modifications */
+        xml = xml.replaceAll("script_mrrt","script");
+        xml = xml.replaceAll("\\\\n",System.lineSeparator());
+        System.out.println(" XML Received : " + xml);
+        MRRTReport report = new MRRTReport();
         // Create MRRT Report
-        /*MRRTReport report = new MRRTReport();
-        report.setEncounter(encounter);
-        report.setXml(mrrtTemplate.getXml());
-        report.setMrrtTemplate(mrrtTemplate);
-        mrrtTemplate.setName(name);
-        MRRTTemplateService mrrtTemplateService = Context.getService(MRRTTemplateService.class);
-        mrrtTemplate.setXml(mrrtTemplateService.stringToClob(xml));
-        System.out.println("Data received : " + mrrtTemplate.getName());
-        System.out.println("Data received : " + mrrtTemplate.getXml());
-        mrrtTemplateService.create(mrrtTemplate);
-        String redirectURL = request.getContextPath() + "/" + MRRTTemplateCRUDFormController.VIEW_EDIT_REQUEST_MAPPING + "view/" + mrrtTemplate.getId() + ".form";
-        */
-        return new ModelAndView(new RedirectView(""));
+        try {
+            report.setEncounter(encounter);
+            report.setXml(Context.getService(MRRTTemplateService.class).stringToClob(xml));
+            report.setMrrtTemplate(mrrtTemplate);
+            report.setName(name);
+            report.setCreator(Context.getAuthenticatedUser());
+            report.setDateCreated(new Date());
+            Context.getService(MRRTReportService.class).create(report);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        String redirectURL = request.getContextPath() + "/" + MRRTReportRUDFormController.VIEW_EDIT_REQUEST_MAPPING + "view/" + report.getId() + ".form";
+        return new ModelAndView(new RedirectView(redirectURL));
     }
 }

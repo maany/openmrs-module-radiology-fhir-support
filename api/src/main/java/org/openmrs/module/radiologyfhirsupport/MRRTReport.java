@@ -18,12 +18,15 @@ public class MRRTReport extends BaseOpenmrsObject{
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
+    @Column(name = "name")
+    private String name;
+
     @JoinColumn(name = "mrrt_template" )
-    @OneToOne()
+    @ManyToOne(cascade = CascadeType.ALL)
     private MRRTTemplate mrrtTemplate;
 
     @JoinColumn(name = "encounter")
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     public Encounter encounter;
 
     // TODO this field would be replaced by changesets in future implementations
@@ -70,6 +73,14 @@ public class MRRTReport extends BaseOpenmrsObject{
     @Override
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public MRRTTemplate getMrrtTemplate() {

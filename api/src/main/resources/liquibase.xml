@@ -88,4 +88,10 @@
                                  constraintName="radfhir_report_creator_fk" referencedTableName="users"
                                  referencedColumnNames="user_id"/>
     </changeSet>
+
+    <changeSet id="radfhir-100120171127" author="maany">
+        <addColumn tableName="radiology_mrrt_report">
+            <column name="name" type="varchar(256)"></column>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

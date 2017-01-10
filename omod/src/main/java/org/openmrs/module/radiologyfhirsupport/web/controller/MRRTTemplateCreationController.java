@@ -4,8 +4,11 @@ import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.radiologyfhirsupport.MRRTTemplate;
 import org.openmrs.module.radiologyfhirsupport.api.MRRTTemplateService;
+import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.ServletRequestDataBinder;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -20,8 +23,6 @@ import java.sql.SQLException;
  */
 @Controller
 public class MRRTTemplateCreationController {
-//    @InitBinder
-
     @RequestMapping(value = "/module/radiologyfhirsupport/template/new.form", method = RequestMethod.GET)
     public String getForm(ModelMap map){
         MRRTTemplate mrrtTemplate = new MRRTTemplate();
