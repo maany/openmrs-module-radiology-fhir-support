@@ -87,10 +87,14 @@ public class MRRTReportServiceTest extends BaseModuleContextSensitiveTest {
     public void deleteById_ShouldDeleteMRRTReport(){
         List<MRRTReport> reports = getService().getAll();
         int sizeInitial= reports.size();
+        MRRTReport report = reports.get(0);
+        Encounter encounter = report.getEncounter();
+        int encounterId = encounter.getEncounterId();
         getService().delete(reports.get(0));
         reports = getService().getAll();
         int sizeFinal = reports.size();
         Assert.assertEquals(sizeInitial,sizeFinal+1);
+        Assert.assertNull("Encounter not deleted when deleting report. Wrong behaviour",Context.getEncounterService().getEncounter(encounterId));
     }
     /*
      * Utility Methods for this Test class

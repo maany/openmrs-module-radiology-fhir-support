@@ -23,6 +23,7 @@ import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 import static org.openmrs.api.context.Context.getEncounterService;
@@ -61,7 +62,9 @@ public class MRRTReportCreationController {
 
         Patient patient = Context.getPatientService().getPatient(patientId);
         DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd'T'HH:mm");
+        dateFormat.setTimeZone(Calendar.getInstance().getTimeZone());
         Date date = dateFormat.parse(dateString);
+        System.out.println("Date Received " + date + " TimeZone " + Calendar.getInstance().getTimeZone().getDisplayName() + " Millis " + date.getTime());
         Location location = Context.getLocationService().getLocation(locationId);
         //*****Create Encounter*********//
         Encounter encounter = new Encounter();

@@ -38,7 +38,7 @@ public class PatientDashboardRadiologyFHIRSupportTabPortletController extends Po
         Patient patient = patientService.getPatient(patientId);
         System.out.println("Patient Name : " + patient.getGivenName());
         List<Encounter> encountersByPatient = encounterService.getEncountersByPatient(patient);
-        System.out.println("Enouncters by Patient : " + Arrays.toString(encountersByPatient.toArray()));
+        System.out.println("Encounters by Patient : " + Arrays.toString(encountersByPatient.toArray()));
         List<MRRTReport> existingReports = new ArrayList<MRRTReport>();
         String mrrtEncounterType = Context.getMessageSourceService().getMessage("radiologyfhirsupport.encounterType");
         try {

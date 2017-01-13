@@ -69,7 +69,13 @@ function activateSync(xml) {
             alert("TextArea changed")
             var target = eventObject.target;
             var value = this.value
-            oldString = getHTML(target).replace()
-
+            oldString = getHTML(eventObject.target).replace(/"/g, '\'').slice(0, -1);
+            target.setAttribute("value", target.value)
+            target.innerHTML = target.value;
+            newString = getHTML(target).replace(/"/g, '\'').slice(0, -1);
+            xml = editor.getValue();
+            xml = xml.replace(oldString, newString);
+            editor.setValue(xml)
+            editor.refresh()
         })
 }
