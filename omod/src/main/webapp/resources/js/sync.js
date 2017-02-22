@@ -32,7 +32,7 @@ function activateSync(xml) {
         $('input').change(function (eventObject) {
             lastEventObject = eventObject;
             var target = eventObject.target;
-            alert("text box found");
+            //alert("text box found");
             console.log("New value : " + target.value)
             oldString = getHTML(eventObject.target).replace(/"/g, '\'').slice(0, -1);
             target.setAttribute("value", target.value)
@@ -66,7 +66,7 @@ function activateSync(xml) {
 
         // TextArea sync handler
         $('textarea').on('change', function(eventObject) {
-            alert("TextArea changed")
+            //alert("TextArea changed")
             var target = eventObject.target;
             var value = this.value
             oldString = getHTML(eventObject.target).replace(/"/g, '\'').slice(0, -1);
