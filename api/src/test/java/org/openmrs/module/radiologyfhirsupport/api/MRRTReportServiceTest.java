@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openmrs.Encounter;
+import org.openmrs.Patient;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
 import org.openmrs.messagesource.MessageSourceService;
@@ -32,6 +33,7 @@ public class MRRTReportServiceTest extends BaseModuleContextSensitiveTest {
     protected static final String ENCOUNTER_INITIAL_DATA_XML= "org/openmrs/api/include/EncounterServiceTest-initialData.xml";
     private String chestXRayEncounterUUID;
     private String cardiacMRIEncounterUUID;
+    private Integer patientId;
     @Before
     public void loadTestData(){
 
@@ -84,6 +86,13 @@ public class MRRTReportServiceTest extends BaseModuleContextSensitiveTest {
         Assert.assertNotNull(report);
     }
     @Test
+    public void getbyPatientId_ShouldReturnAllReportsForPatient(){
+        List<MRRTReport> reports = getService().getByPatientId(patientId);
+        Assert.assertNotNull(reports);
+        Assert.assertNotEquals(reports.size(),0);
+        Assert.assertEquals(reports.size(),2);
+    }
+    @Test
     public void deleteById_ShouldDeleteMRRTReport(){
         List<MRRTReport> reports = getService().getAll();
         int sizeInitial= reports.size();
@@ -104,9 +113,13 @@ public class MRRTReportServiceTest extends BaseModuleContextSensitiveTest {
         return Context.getService(MRRTReportService.class);
     }
     void loadMRRTReports(){
+        Patient patient = Context.getPatientService().getAllPatients().get(0);
+        patientId = patient.getId();
+
         MRRTReport cardiacMRIReport = new MRRTReport();
         MRRTTemplate cardiacMRITemplate = Context.getService(MRRTTemplateService.class).getByEncounterUUID(cardiacMRIEncounterUUID);
         Encounter cardiacMRIEncounter = Context.getService(org.openmrs.api.EncounterService.class).getEncounterByUuid(cardiacMRIEncounterUUID);
+        cardiacMRIEncounter.setPatient(patient);
         cardiacMRIReport.setMrrtTemplate(cardiacMRITemplate);
         cardiacMRIReport.setEncounter(cardiacMRIEncounter);
         cardiacMRIReport.setXml(cardiacMRITemplate.getXml());
@@ -115,6 +128,7 @@ public class MRRTReportServiceTest extends BaseModuleContextSensitiveTest {
         MRRTReport chestXRayReport = new MRRTReport();
         MRRTTemplate chestXRayTemplate = Context.getService(MRRTTemplateService.class).getByEncounterUUID(chestXRayEncounterUUID);
         Encounter chestXRayEncounter = Context.getService(org.openmrs.api.EncounterService.class).getEncounterByUuid(chestXRayEncounterUUID);
+        chestXRayEncounter.setPatient(patient);
         chestXRayReport.setMrrtTemplate(chestXRayTemplate);
         chestXRayReport.setEncounter(chestXRayEncounter);
         chestXRayReport.setXml(chestXRayTemplate.getXml());

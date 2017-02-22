@@ -33,6 +33,12 @@ public interface MRRTReportDAO {
 
     /**
      *
+     * @param patientId
+     * @return
+     */
+    List<MRRTReport> getByPatientId(Integer patientId);
+    /**
+     *
      * @param encounter
      * @return
      */

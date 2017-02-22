@@ -17,9 +17,9 @@ Encounters = ${model.encounters}
             <tr>
                 <td>pic</td>
                 <td>pic</td>
-                <td>report.name</td>
-                <td>report.encounter.dateCreated</td>
-                <td>report.mrrtTemplate</td>
+                <td>${report.name}</td>
+                <td>${report.encounter.encounterDatetime}</td>
+                <td>${report.mrrtTemplate.name}</td>
             </tr>
         </c:forEach>
     </table>

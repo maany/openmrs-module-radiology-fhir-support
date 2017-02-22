@@ -63,6 +63,11 @@ public class MRRTReportServiceImpl extends BaseOpenmrsService implements MRRTRep
     }
 
     @Override
+    public List<MRRTReport> getByPatientId(Integer patientId) {
+        return dao.getByPatientId(patientId);
+    }
+
+    @Override
     @Transactional
     public int saveOrUpdate(MRRTReport report) {
         return dao.saveOrUpdate(report);

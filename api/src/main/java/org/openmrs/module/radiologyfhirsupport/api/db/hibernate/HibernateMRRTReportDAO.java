@@ -9,6 +9,7 @@ import org.openmrs.Encounter;
 import org.openmrs.module.radiologyfhirsupport.MRRTReport;
 import org.openmrs.module.radiologyfhirsupport.api.db.MRRTReportDAO;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -51,6 +52,18 @@ public class HibernateMRRTReportDAO implements MRRTReportDAO {
         query.setParameter("encounter_uuid",encounterUUID);
         List<MRRTReport> list = (List<MRRTReport>)query.list();
         return list.get(0);
+    }
+
+    @Override
+    public List<MRRTReport> getByPatientId(Integer patientId) {
+        List<MRRTReport> allReports = getAll();
+        List<MRRTReport> reports = new ArrayList<MRRTReport>();
+        for(MRRTReport report: allReports){
+            if(report.encounter.getPatient().getId()==patientId) {
+                reports.add(report);
+            }
+        }
+        return reports;
     }
 
     @Override

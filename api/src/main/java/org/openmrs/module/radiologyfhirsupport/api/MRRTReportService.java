@@ -39,6 +39,13 @@ public interface MRRTReportService {
      * @return
      */
     MRRTReport getByEncounter(Encounter encounter);
+
+    /**
+     *
+     * @param patientId
+     * @return
+     */
+    List<MRRTReport> getByPatientId(Integer patientId);
     /**
      *
      * @param report

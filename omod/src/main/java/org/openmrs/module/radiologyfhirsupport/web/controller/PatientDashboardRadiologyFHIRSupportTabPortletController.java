@@ -47,6 +47,7 @@ public class PatientDashboardRadiologyFHIRSupportTabPortletController extends Po
                 if (encounter.getEncounterType().getName().equals(mrrtEncounterType)) {
                     System.out.println("** Encounter Type Matches!!");
                     MRRTReport report = mrrtReportService.getByEncounterUUID(encounter.getUuid());
+
                     existingReports.add(report);
                 }
             }
@@ -61,6 +62,7 @@ public class PatientDashboardRadiologyFHIRSupportTabPortletController extends Po
         }catch(Exception ex){
             ex.printStackTrace();
         }
+        existingReports = mrrtReportService.getByPatientId(patientId);
         model.put("reports",existingReports);
         model.put("templates",mrrtTemplates);
         model.put("patient",patient);
