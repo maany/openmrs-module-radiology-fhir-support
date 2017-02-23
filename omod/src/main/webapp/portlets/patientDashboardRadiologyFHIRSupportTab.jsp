@@ -3,7 +3,6 @@
 <%@ include file="/WEB-INF/template/include.jsp"%>
 Hello World <br>
 
-Encounters = ${model.encounters}
 <%--<%! List<MRRTTemplate> mrrtTemplates = templates; %>--%>
     <table>
         <tr>
@@ -15,8 +14,8 @@ Encounters = ${model.encounters}
         </tr>
         <c:forEach items="${model.reports}" var="report" varStatus="i">
             <tr>
-                <td>pic</td>
-                <td>pic</td>
+                <td><a href="">pic</a></td>
+                <td><a href="">pic ${report.encounter.uuid}</a></td>
                 <td>${report.name}</td>
                 <td>${report.encounter.encounterDatetime}</td>
                 <td>${report.mrrtTemplate.name}</td>

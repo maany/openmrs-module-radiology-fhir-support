@@ -1,6 +1,7 @@
 package org.openmrs.module.radiologyfhirsupport.api;
 
 import ca.uhn.fhir.model.dstu2.resource.DiagnosticReport;
+import org.openmrs.module.radiologyfhirsupport.MRRTReport;
 import org.openmrs.module.radiologyfhirsupport.MRRTTemplate;
 
 import java.util.Map;
@@ -10,5 +11,6 @@ import java.util.Map;
  */
 public interface MRRTToFHIRService {
     DiagnosticReport convertMRRTToFHIRViaXPath(MRRTTemplate template, Map<String, String> xPathMapping);
+    DiagnosticReport convertMRRTToFHIRViaXPath(MRRTReport report, Map<String, String> xPathMapping);
     Map<String,String> getDefaultMapping();
 }

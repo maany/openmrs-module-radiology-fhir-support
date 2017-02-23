@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * Created by devmaany on 18/10/16.
@@ -26,6 +27,7 @@ import java.util.Map;
 @RequestMapping(PatientDashboardRadiologyFHIRSupportTabPortletController.PATIENT_DASHBOARD_PORTLET_CONTROLLER)
 public class PatientDashboardRadiologyFHIRSupportTabPortletController extends PortletController {
     public static final String PATIENT_DASHBOARD_PORTLET_CONTROLLER = "**/patientDashboardRadiologyFHIRSupportTab.portlet";
+    protected final Logger logger = Logger.getLogger(PatientDashboardRadiologyFHIRSupportTabPortletController.class.getName());
     private MRRTTemplateService mrrtTemplateService=null;
     private MRRTReportService mrrtReportService=null;
     private PatientService patientService=null;
@@ -36,29 +38,13 @@ public class PatientDashboardRadiologyFHIRSupportTabPortletController extends Po
 
         Integer patientId = Integer.parseInt(request.getParameter("patientId"));
         Patient patient = patientService.getPatient(patientId);
-        System.out.println("Patient Name : " + patient.getGivenName());
+        logger.info("Patient Name : " + patient.getGivenName());
         List<Encounter> encountersByPatient = encounterService.getEncountersByPatient(patient);
-        System.out.println("Encounters by Patient : " + Arrays.toString(encountersByPatient.toArray()));
-        List<MRRTReport> existingReports = new ArrayList<MRRTReport>();
-        String mrrtEncounterType = Context.getMessageSourceService().getMessage("radiologyfhirsupport.encounterType");
-        try {
-            for (Encounter encounter : encountersByPatient) {
-                System.out.println("*Found Encounter : " + encounter.getUuid() + " Type : " + encounter.getEncounterType().getName());
-                if (encounter.getEncounterType().getName().equals(mrrtEncounterType)) {
-                    System.out.println("** Encounter Type Matches!!");
-                    MRRTReport report = mrrtReportService.getByEncounterUUID(encounter.getUuid());
-
-                    existingReports.add(report);
-                }
-            }
-        }catch(IndexOutOfBoundsException ex){
-            System.out.println("No MRRT Reports exist for current patient");
-            ex.printStackTrace();
-        }
-        List<MRRTTemplate> mrrtTemplates = new ArrayList<MRRTTemplate>();
+        List<MRRTReport> existingReports = null;
+        List<MRRTTemplate> mrrtTemplates = null;
         try {
             mrrtTemplates = mrrtTemplateService.getAll();
-            System.out.println("templates: " + Arrays.toString(mrrtTemplates.toArray()));
+//            System.out.println("templates: " + Arrays.toString(mrrtTemplates.toArray()));
         }catch(Exception ex){
             ex.printStackTrace();
         }

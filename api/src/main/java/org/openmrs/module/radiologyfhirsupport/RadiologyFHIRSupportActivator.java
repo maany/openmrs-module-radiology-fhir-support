@@ -24,7 +24,9 @@ import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.ModuleActivator;
 import org.openmrs.module.ModuleFactory;
 import org.openmrs.module.fhir.api.DiagnosticReportService;
+import org.openmrs.module.radiologyfhirsupport.api.handler.MRRTReportHandler;
 import org.openmrs.module.radiologyfhirsupport.api.handler.MRRTTemplateHandler;
+import org.openmrs.notification.Message;
 import org.openmrs.util.OpenmrsUtil;
 import org.springframework.stereotype.Component;
 
@@ -183,7 +185,19 @@ public class RadiologyFHIRSupportActivator implements ModuleActivator {
 
 	}
 	public void registerFHIRDiagnosticReportHandler(MessageSourceService messageSourceService){
-		String mrrtTemplateHandlerName = messageSourceService.getMessage("radiologyfhirsupport.handlerName");
+		String mrrtReportHandlerName = messageSourceService.getMessage("radiologyfhirsupport.encounterType");
+		logger.log(Level.INFO,"Registering FHIR Diagnostic Report Handler for MRRT templates. Handler name is : " + mrrtReportHandlerName);
+		DiagnosticReportService diagnosticReportService = Context.getService(DiagnosticReportService.class);
+		if(!diagnosticReportService.getHandlers().containsKey(mrrtReportHandlerName)) {
+			logger.log(Level.INFO,"Creating new FHIR Diagnostic Report Handler for MRRT templates");
+			diagnosticReportService.registerHandler(mrrtReportHandlerName, new MRRTReportHandler());
+		}else {
+			logger.log(Level.INFO,"FHIR Diagnostic Report Handler for MRRT Reports already exists");
+		}
+
+	}
+	public void registerFHIRDiagnosticReportHandlerForMRRTTemplates(MessageSourceService messageSourceService){
+		String mrrtTemplateHandlerName = messageSourceService.getMessage("radiologyfhirsupport.handlerNameForTemplates"); /* change to encounterType if you want templates to work*/
 		logger.log(Level.INFO,"Registering FHIR Diagnostic Report Handler for MRRT templates. Handler name is : " + mrrtTemplateHandlerName);
 		DiagnosticReportService diagnosticReportService = Context.getService(DiagnosticReportService.class);
 		if(!diagnosticReportService.getHandlers().containsKey(mrrtTemplateHandlerName)) {

@@ -3,6 +3,7 @@ package org.openmrs.module.radiologyfhirsupport.api.impl;
 import ca.uhn.fhir.model.dstu2.resource.DiagnosticReport;
 import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.radiologyfhirsupport.MRRTReport;
 import org.openmrs.module.radiologyfhirsupport.MRRTTemplate;
 import org.openmrs.module.radiologyfhirsupport.api.MRRTTemplateService;
 import org.openmrs.module.radiologyfhirsupport.api.MRRTToFHIRService;
@@ -38,6 +39,28 @@ public class MRRTToFHIRServiceImpl implements MRRTToFHIRService {
         XPathMapper xPathMapper = new XPathMapper(encounterUuid,xml,xPathMappings);
         DiagnosticReport diagnosticReport = xPathMapper.getDiagnosticReport();
 
+        return diagnosticReport;
+    }
+
+    @Override
+    public DiagnosticReport convertMRRTToFHIRViaXPath(MRRTReport report, Map<String, String> xPathMapping) {
+        MRRTTemplateService mrrtTemplateService = Context.getService(MRRTTemplateService.class);
+        String xml = null;
+        try {
+            xml = mrrtTemplateService.clobToString(report.getXml());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String xmlConversionError = Context.getMessageSourceService().getMessage("radiologyfhirsupport.xmlConversionError");
+        if(xml==null )
+            throw new APIException(xmlConversionError);
+
+        xPathMapping.put("encounterUuid","id");
+        String encounterUuid = report.getEncounter().getUuid();
+        XPathMapper xPathMapper = new XPathMapper(encounterUuid,xml,xPathMapping);
+        DiagnosticReport diagnosticReport = xPathMapper.getDiagnosticReport();
         return diagnosticReport;
     }
 
