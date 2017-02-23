@@ -96,7 +96,8 @@ public class MRRTReportCreationController {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        String redirectURL = request.getContextPath() + "/" + MRRTReportRUDFormController.VIEW_EDIT_REQUEST_MAPPING + "view/" + report.getId() + ".form";
+//        String redirectURL = request.getContextPath() + "/" + MRRTReportRUDFormController.VIEW_EDIT_REQUEST_MAPPING + "view/" + report.getId() + ".form";
+        String redirectURL = request.getContextPath() + "/" + "patientDashboard.form?patientId="+ patientId;
         return new ModelAndView(new RedirectView(redirectURL));
     }
 }

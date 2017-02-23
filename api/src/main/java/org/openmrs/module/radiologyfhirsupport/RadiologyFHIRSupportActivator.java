@@ -26,7 +26,6 @@ import org.openmrs.module.ModuleFactory;
 import org.openmrs.module.fhir.api.DiagnosticReportService;
 import org.openmrs.module.radiologyfhirsupport.api.handler.MRRTReportHandler;
 import org.openmrs.module.radiologyfhirsupport.api.handler.MRRTTemplateHandler;
-import org.openmrs.notification.Message;
 import org.openmrs.util.OpenmrsUtil;
 import org.springframework.stereotype.Component;
 

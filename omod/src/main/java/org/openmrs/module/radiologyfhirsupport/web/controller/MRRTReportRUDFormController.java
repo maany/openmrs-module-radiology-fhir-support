@@ -86,7 +86,8 @@ public class MRRTReportRUDFormController {
             e.printStackTrace();
             map.put("message", "Error saving the report.Please contact the developer");
         }
-        String redirectURL = request.getContextPath() + "/" + MRRTReportRUDFormController.VIEW_EDIT_REQUEST_MAPPING + "view/" + report.getId() + ".form";
+//        String redirectURL = request.getContextPath() + "/" + MRRTReportRUDFormController.VIEW_EDIT_REQUEST_MAPPING + "view/" + report.getId() + ".form";
+        String redirectURL = request.getContextPath() + "/" + "patientDashboard.form?patientId="+ report.getEncounter().getPatient().getId();
         return new ModelAndView(new RedirectView(redirectURL));
     }
     @RequestMapping(value = MRRTReportRUDFormController.VIEW_EDIT_REQUEST_MAPPING + "view/{reportId}.form", method = RequestMethod.DELETE)
