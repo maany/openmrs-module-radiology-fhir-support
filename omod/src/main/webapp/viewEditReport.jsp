@@ -2,7 +2,7 @@
 <%@ include file="/WEB-INF/template/include.jsp"%>
 <%@ include file="/WEB-INF/template/header.jsp"%>
 
-<%@ include file="template/localHeader.jsp"%>
+<%--<%@ include file="template/localHeader.jsp"%>--%>
 
 <style>
     .error {
@@ -60,48 +60,57 @@
         })
     }
 </script>
-<h2><openmrs:message code="radiologyfhirsupport.mrrt.report.create"/></h2>
-
+<h2><openmrs:message code="radiologyfhirsupport.mrrt.report.edit"/></h2>
+<b class="boxHeader"><openmrs:message code="radiologyfhirsupport.mrrt.report.create.summary"/></b>
 <form>
-    <table>
-        <tr>
-            <td>MRRT Report Name</td>
-            <td><input type = "text" name="name" value="${report.name}"/></td>
-        </tr>
-        <tr>
-            <td>Location</td>
-            <td>
-                <select name="locationId">
-                <c:forEach var="location" items="${locations}">
-                    <c:if test="${location.locationId == report.encounter.location.locationId}">
-                        <option value="${location.locationId}" selected="selected"><c:out
-                                value="${location.name}"/></option>
-                    </c:if>
-                    <c:if test="${location.locationId != report.encounter.location.locationId}">
-                        <option value="${location.locationId}"><c:out value="${location.name}"/></option>
-                    </c:if>
-                </c:forEach>
-                </select>
-            </td>
-        </tr>
-        <tr>
-            <td>Date</td>
-            <td>
-                <input id='date' type="datetime-local" name="dateString"/>
-            </td>
-        </tr>
-        <tr>
-            <td>MRRT Report</td>
-            <td id="report"></td>
-        </tr>
-        <tr>
-            <td>XML</td>
-            <td><textarea name = "xml" id = "editor" path="xml" rows="20" cols="50"></textarea></td>
-            <%--<td><form:errors path="xml" cssClass="error"/></td>--%>
-        </tr>
-    </table>
-    <input type="submit" value="Save Report " formmethod="post" />
+    <div class="box">
+        <table>
+            <tr>
+                <td>MRRT Report Name</td>
+                <td><input type="text" name="name" value="${report.name}"/></td>
+            </tr>
+            <tr>
+                <td>Location</td>
+                <td>
+                    <select name="locationId">
+                        <c:forEach var="location" items="${locations}">
+                            <c:if test="${location.locationId == report.encounter.location.locationId}">
+                                <option value="${location.locationId}" selected="selected"><c:out
+                                        value="${location.name}"/></option>
+                            </c:if>
+                            <c:if test="${location.locationId != report.encounter.location.locationId}">
+                                <option value="${location.locationId}"><c:out value="${location.name}"/></option>
+                            </c:if>
+                        </c:forEach>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>Date</td>
+                <td>
+                    <input id='date' type="datetime-local" name="dateString"/>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <br>
+    <b class="boxHeader"><openmrs:message code="radiologyfhirsupport.mrrt.report.create.report"/></b>
+    <div class="box">
+        <div id="report"></div>
+    </div>
+    <br>
+    <b class="boxHeader"><openmrs:message code="radiologyfhirsupport.mrrt.report.create.xml"/></b>
+    <div class="box">
+        <textarea name="xml" id="editor" path="xml" rows="20" cols="50"></textarea>
+        <%--<td><form:errors path="xml" cssClass="error"/></td>--%>
+    </div>
+    <br>
+    <input type="submit" value="Save Report " formmethod="post"/>
+    &nbsp;
     <input type="button" value="Delete Report" onclick="deleteReport()"/>
+    &nbsp;
+    <input type="button" value="Cancel"
+           onclick="history.go(-1); return; document.location='index.htm?autoJump=false&amp;phrase='">
 </form>
 
 
