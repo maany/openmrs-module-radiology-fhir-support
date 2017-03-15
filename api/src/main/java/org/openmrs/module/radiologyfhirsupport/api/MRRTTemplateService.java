@@ -13,6 +13,7 @@
  */
 package org.openmrs.module.radiologyfhirsupport.api;
 
+import org.openmrs.User;
 import org.openmrs.api.OpenmrsService;
 import org.openmrs.module.radiologyfhirsupport.MRRTTemplate;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.sql.Clob;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
 
 import static java.sql.Types.CLOB;
@@ -105,5 +107,14 @@ public interface MRRTTemplateService extends OpenmrsService {
      * @return
      */
     Clob stringToClob(String xml) throws SQLException;
+
+    /**
+     *
+     * @param templateId
+     * @param voidedBy
+     * @param voidedOn
+     * @param voidReason
+     */
+    void retire(int templateId, User voidedBy, Date voidedOn, String voidReason);
 
 }

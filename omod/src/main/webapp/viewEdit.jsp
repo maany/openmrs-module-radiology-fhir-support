@@ -1,8 +1,14 @@
 <%@ include file="/WEB-INF/template/include.jsp"%>
 <%@ include file="/WEB-INF/template/header.jsp"%>
 
-<%@ include file="template/localHeader.jsp"%>
+<%--<%@ include file="template/localHeader.jsp"%>--%>
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/codemirror/CodeMirror/master/lib/codemirror.css">
+<openmrs:htmlInclude file="/moduleResources/radiologyfhirsupport/codemirror/codemirror.js" />
+<openmrs:htmlInclude file="/moduleResources/radiologyfhirsupport/js/sync.js" />
+<script type="text/javascript" src="https://cdn.rawgit.com/codemirror/CodeMirror/master/mode/xml/xml.js"></script>
+
 <style>
     .error {
         color: #ff0000;
@@ -16,136 +22,61 @@
         margin: 16px;
     }
 </style>
-
-<link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/codemirror/CodeMirror/master/lib/codemirror.css">
-<openmrs:htmlInclude file="/moduleResources/radiologyfhirsupport/codemirror/codemirror.js" />
-<script type="text/javascript" src="https://cdn.rawgit.com/codemirror/CodeMirror/master/mode/xml/xml.js"></script>
-
-
-<h2><openmrs:message code="radiologyfhirsupport.mrrt.viewEdit"/></h2>
-<%--<form:form modelAttribute="template">
-<form:errors path="*" cssClass="errorblock" element="div"/>
-<form:hidden path="id"/>
-<table>
-    <tr>
-        <td>MRRT Template Name</td>
-        <td><form:input path="name"/></td>
-        <td><form:errors path="name" cssClass="error"/></td>
-    </tr>
-
-    <tr>
-        <td>Template</td>
-        <td id="template"></td>
-    </tr>
-&lt;%&ndash;    <tr>
-        <td><button id="showCodeWindow">Show XML</button></td>
-        <td><button id="hideCodeWindow">Hide XML</button></td>
-    </tr>&ndash;%&gt;
-    <tr>
-            <td>XML</td>
-            <td><textarea name="xml" id = "editor" rows="20" cols="50"></textarea></td>
-        &lt;%&ndash;<td><form:errors path="
-        .+xml" cssClass="error"/></td>&ndash;%&gt;
-    </tr>
-</table>
-<input type="submit" value="Save Changes" formmethod="post" />
-<button id="delete">Delete</button>
-</form:form>--%>
-
-<form>
-    <table>
-        <tr>
-            <td>MRRT Template Name</td>
-            <td>${template.name}</td>
-        </tr>
-
-        <tr>
-            <td>Template</td>
-            <td id='template'></td>
-        </tr>
-        <%--    <tr>
-                <td><button id="showCodeWindow">Show XML</button></td>
-                <td><button id="hideCodeWindow">Hide XML</button></td>
-            </tr>--%>
-        <tr>
-            <td>XML</td>
-            <td><textarea name="xml" id = "editor" rows="20" cols="50"></textarea></td>
-            <%--<td><form:errors path="
-            .+xml" cssClass="error"/></td>--%>
-        </tr>
-    </table>
-    <input type="submit" value="Save Changes" formmethod="post" />
-    <button id="delete">Delete</button>
-</form>
-
-<%--<script>
-    $("#hideCodeWindow").click(function () {
-        $(editorDOMElement).hide(1000);
-    });
-    $("#showCodeWindow").click(function () {
-        $(editorDOMElement).show(1000);
-    })
-</script>--%>
 <script>
     $(document).ready(function () {
-        var editor = CodeMirror.fromTextArea(document.getElementById("editor"), {
-            lineNumbers: true,
-            mode:  "xml"
-        });
-        var editorContainer = document.getElementById('editor');
-        var report = document.getElementById("report")
-        var xml = "${xml}"
-        editor.setValue(xml);
-
-        //editorDOMElement = editor.getWrapperElement();
-        //$(editorDOMElement).hide();
+        var editor = activateSync("${xml}")
         $("#delete").click(function () {
-            var pageUrl = window.location.href;
-            alert("Are you sure you want to delete this template??");
-            $.ajax({
-                url: pageUrl,
-                type: 'DELETE'
-            });
-        });
-
-        var template = document.getElementById('template');
-        template.innerHTML = xml;
-
-        function getHTML(target){
-            var wrap = document.createElement('div');
-            wrap.appendChild(target.cloneNode(true));
-            return wrap.innerHTML;
-        }
-        var lastEventObject;
-        var oldString,newString;
-        var inputs = document.getElementsByTagName('input');
-        $('input').change(function (eventObject) {
-            lastEventObject = eventObject;
-            var target = eventObject.target;
-            //alert(getHTML(eventObject.target));
-            //alert("Form changed");
-            switch (target.type) {
-                case "text":
-                    //alert("text box found");
-                    //console.log("New value : " + target.value)
-                    oldString = getHTML(eventObject.target).replace(/"/g, '\'').slice(0,-1);
-                    target.setAttribute("value",target.value)
-                    newString = getHTML(target).replace(/"/g, '\'').slice(0,-1);
-                    xml = editor.getValue();
-                    xml  = xml.replace(oldString,newString);
-                    //console.log(xml)
-                    break;
-                default:
+            var response = confirm("Are you sure you want to delete this template??");
+            if (response == true) {
+                editor.setValue(' ');
+                editor.refresh();
+                $.ajax({
+                    url: window.location.pathname,
+                    type: 'DELETE',
+                    success: function (result) {
+                        alert('delete success')
+                        window.location.replace("${deleteRedirectURL}");
+                    },
+                    error: function (result) {
+                        alert('error');
+                        console.log(result);
+                        window.location.replace("${deleteRedirectURL}");
+                    }
+                })
+            }else {
 
             }
-            editor.getDoc().setValue(xml);
-            editor.refresh();
-        });
+        })
 
     });
 
 </script>
-
-
+<h2><openmrs:message code="radiologyfhirsupport.mrrt.viewEdit"/></h2>
+<form>
+    <b class="boxHeader"><openmrs:message code="radiologyfhirsupport.mrrt.create.summary"/> </b>
+    <div class="box">
+    <table cellpadding="3px" cellspacing="2px">
+        <tr>
+            <td>MRRT Template Name</td>
+            <td><input type="text" name="name" value="${template.name}"/></td>
+        </tr>
+    </table>
+    </div>
+    <br>
+    <b class="boxHeader"><openmrs:message code="radiologyfhirsupport.mrrt.view.template"/> </b>
+     <div class="box">
+            <div id='template'></div>
+     </div>
+     <br>
+     <b class="boxHeader"><openmrs:message code="radiologyfhirsupport.mrrt.create.xml"/> <a href="https://radreport.org"><openmrs:message code="radiologyfhirsupport.mrrt.create.xml.url"/> </a> </b>
+      <div class="box">
+            <textarea name="xml" id = "editor" rows="20" cols="50"></textarea>
+      </div>
+    <br>
+    <input type="submit" value="Save Changes" formmethod="post" />
+    <input type="button" id="delete" value="Delete"/>
+    <input type="button" value="Cancel"
+           onclick="history.go(-1); return; document.location='index.htm?autoJump=false&amp;phrase='">
+</form>
 
 <%@ include file="/WEB-INF/template/footer.jsp" %>

@@ -31,9 +31,10 @@ public class MRRTTemplateCRUDFormController {
     public static final String VIEW_EDIT_REQUEST_MAPPING = "module/radiologyfhirsupport/template/";
 
     @RequestMapping(value = MRRTTemplateCRUDFormController.VIEW_EDIT_REQUEST_MAPPING + "view/{templateId}.form", method = RequestMethod.GET)
-    public ModelAndView viewEdit(@PathVariable Integer templateId, ModelMap map) {
+    public ModelAndView viewEdit(@PathVariable Integer templateId, ModelMap map, HttpServletRequest request) {
         MRRTTemplate mrrtTemplate = getService().getById(templateId);
         map.addAttribute("template", mrrtTemplate);
+        map.put("deleteRedirectURL",request.getContextPath() + "/" + MRRTTemplateIndexController.INDEX_CONTROLLER);
         try {
             String xml =  Context.getService(MRRTTemplateService.class).clobToString(mrrtTemplate.getXml());
             xml = xml.replaceAll("script","script_mrrt");
@@ -49,7 +50,7 @@ public class MRRTTemplateCRUDFormController {
         return new ModelAndView("module/radiologyfhirsupport/viewEdit");
     }
 
-    @RequestMapping(value = MRRTTemplateCRUDFormController.VIEW_EDIT_REQUEST_MAPPING + "view/{templateId}", method = RequestMethod.POST)
+    @RequestMapping(value = MRRTTemplateCRUDFormController.VIEW_EDIT_REQUEST_MAPPING + "view/{templateId}.form", method = RequestMethod.POST)
     public ModelAndView editForm(@PathVariable Integer templateId, HttpServletRequest request,@Valid @ModelAttribute("template") MRRTTemplate template, BindingResult errors, ModelMap map) {
         String name = request.getParameter("name");
         String xml = request.getParameter("xml");
@@ -64,23 +65,14 @@ public class MRRTTemplateCRUDFormController {
         }
         getService().saveOrUpdate(mrrtTemplate);
         logger.info("Making edits for template with id " + mrrtTemplate.getId());
-        return new ModelAndView(new RedirectView("/openmrs/" + MRRTTemplateIndexController.INDEX_CONTROLLER));
+        return new ModelAndView(new RedirectView(request.getContextPath() + MRRTTemplateIndexController.INDEX_CONTROLLER));
     }
 
-    @RequestMapping(value = MRRTTemplateCRUDFormController.VIEW_EDIT_REQUEST_MAPPING + "/view/{templateId}", method = RequestMethod.DELETE)
-    public ModelAndView deleteTemplate(HttpServletRequest request, @ModelAttribute MRRTTemplate mrrtTemplate, @PathVariable Integer templateId) {
+    @RequestMapping(value = MRRTTemplateCRUDFormController.VIEW_EDIT_REQUEST_MAPPING + "/view/{templateId}.form", method = RequestMethod.DELETE)
+    public ModelAndView deleteTemplate(HttpServletRequest request, @PathVariable Integer templateId, ModelMap map) {
         System.out.println("We can Delete stuff now!!");
         String redirectURI = request.getContextPath() + "/" + MRRTTemplateIndexController.INDEX_CONTROLLER;
-       /* EncounterService encounterService = Context.getEncounterService();
-        MRRTTemplate template = getService().getById(templateId);
-        Encounter encounter = encounterService.getEncounterByUuid(template.encounterUuid);
-        if(encounter!=null){
-            System.out.println("Encounter found. uuid below");
-            System.out.println(encounter.getUuid());
-        }else{
-            System.out.println("Encounter not found");
-        }
-        encounterService.purgeEncounter(encounter);*///,"Voided by " + Context.getAuthenticatedUser() + " using Radiology FHIR Support module");
+        MRRTTemplate mrrtTemplate = getService().getById(templateId);
         mrrtTemplate = getService().delete(templateId);
         logger.log(Level.INFO,"MRRT Template Unregistered : " + mrrtTemplate.getName());
         return new ModelAndView(new RedirectView(redirectURI));

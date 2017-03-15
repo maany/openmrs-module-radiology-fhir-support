@@ -28,6 +28,7 @@
                 <% int sNo = 0; %>
                 <c:forEach items="${templateMap}" var="templateMap" varStatus="i">
                     <% sNo++;%>
+                    <c:if test="${!templateMap.key.voided}"/>
                     <tr>
                         <td><c:out value="<%= sNo%>"/></td>
                         <td>

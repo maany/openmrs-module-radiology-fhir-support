@@ -21,8 +21,7 @@ function activateSync(xml) {
             lineNumbers: true,
             mode:  "xml"
         });
-        var editorContainer = document.getElementById('editor');
-        var report = document.getElementById("report")
+        var report = document.getElementById("report") || document.getElementById("template")
         editor.setValue(xml);
         report.innerHTML=xml;
 
@@ -78,4 +77,5 @@ function activateSync(xml) {
             editor.setValue(xml)
             editor.refresh()
         })
+    return editor;
 }

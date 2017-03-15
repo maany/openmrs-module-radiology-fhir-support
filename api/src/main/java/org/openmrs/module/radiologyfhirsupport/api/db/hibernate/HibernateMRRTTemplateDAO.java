@@ -85,7 +85,8 @@ public class HibernateMRRTTemplateDAO implements MRRTTemplateDAO {
 	@Override
 	public MRRTTemplate delete(MRRTTemplate template) {
 		boolean flag = false;
-		sessionFactory.getCurrentSession().delete(template);
+		template.setVoided(true);
+//		sessionFactory.getCurrentSession().delete(template);
 		return template;
 	}
 }
