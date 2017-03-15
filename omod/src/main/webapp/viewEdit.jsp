@@ -26,12 +26,11 @@
     $(document).ready(function () {
         var editor = activateSync("${xml}")
         $("#delete").click(function () {
-            var response = confirm("Are you sure you want to delete this template??");
-            if (response == true) {
+            var reason = prompt("Are you sure you want to delete this template?? If yes, please specify a reason.");
+            if (reason!=null) {
                 editor.setValue(' ');
-                editor.refresh();
                 $.ajax({
-                    url: window.location.pathname,
+                    url: window.location.pathname + "?voidReason=" + reason,
                     type: 'DELETE',
                     success: function (result) {
                         alert('delete success')

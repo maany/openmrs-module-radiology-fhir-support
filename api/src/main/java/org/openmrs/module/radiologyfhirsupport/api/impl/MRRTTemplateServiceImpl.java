@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.sql.Clob;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -68,6 +69,17 @@ public class MRRTTemplateServiceImpl extends BaseOpenmrsService implements MRRTT
     @Transactional(readOnly = true)
     public List<MRRTTemplate> getAll() {
         return dao.getAll();
+    }
+
+    @Override
+    public List<MRRTTemplate> getActive() {
+        List<MRRTTemplate> templates = getAll();
+        List<MRRTTemplate> active = new ArrayList();
+        for(MRRTTemplate template:templates){
+            if(!template.getVoided())
+                active.add(template);
+        }
+        return active;
     }
 
     @Override
@@ -125,6 +137,16 @@ public class MRRTTemplateServiceImpl extends BaseOpenmrsService implements MRRTT
     @Override
     public Clob stringToClob(String xml) throws SQLException {
         return new SerialClob(xml.toCharArray());
+    }
+
+    @Override
+    public MRRTTemplate retire(int templateId, User voidedBy, Date voidedOn, String voidReason) {
+        MRRTTemplate template = getById(templateId);
+        template.setVoided(true);
+        template.setVoidedBy(voidedBy);
+        template.setDateVoided(voidedOn);
+        template.setVoidReason(voidReason);
+        return template;
     }
 
     /**

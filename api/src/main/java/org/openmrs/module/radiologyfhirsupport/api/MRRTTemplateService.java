@@ -58,6 +58,11 @@ public interface MRRTTemplateService extends OpenmrsService {
 
     /**
      *
+     * @return
+     */
+    List<MRRTTemplate> getActive();
+    /**
+     *
      * @param encounterUUID
      * @return
      */
@@ -115,6 +120,6 @@ public interface MRRTTemplateService extends OpenmrsService {
      * @param voidedOn
      * @param voidReason
      */
-    void retire(int templateId, User voidedBy, Date voidedOn, String voidReason);
+    MRRTTemplate retire(int templateId, User voidedBy, Date voidedOn, String voidReason);
 
 }

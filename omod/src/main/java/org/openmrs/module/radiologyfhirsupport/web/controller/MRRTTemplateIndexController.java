@@ -36,7 +36,7 @@ public class MRRTTemplateIndexController {
         Map<MRRTTemplate,Encounter> templateMap = new HashMap<MRRTTemplate, Encounter>();
         MRRTTemplateService mrrtTemplateService = Context.getService(MRRTTemplateService.class);
         EncounterService encounterService = Context.getEncounterService();
-        List<MRRTTemplate> templates = mrrtTemplateService.getAll();
+        List<MRRTTemplate> templates = mrrtTemplateService.getActive();
         for(MRRTTemplate template: templates){
             Encounter encounter= encounterService.getEncounterByUuid(template.getEncounterUuid());
             templateMap.put(template,encounter);

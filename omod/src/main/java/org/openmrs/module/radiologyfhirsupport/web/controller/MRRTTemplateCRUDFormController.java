@@ -6,10 +6,7 @@ import org.openmrs.module.radiologyfhirsupport.api.MRRTTemplateService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -17,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -69,11 +67,10 @@ public class MRRTTemplateCRUDFormController {
     }
 
     @RequestMapping(value = MRRTTemplateCRUDFormController.VIEW_EDIT_REQUEST_MAPPING + "/view/{templateId}.form", method = RequestMethod.DELETE)
-    public ModelAndView deleteTemplate(HttpServletRequest request, @PathVariable Integer templateId, ModelMap map) {
+    public ModelAndView deleteTemplate(HttpServletRequest request, @PathVariable Integer templateId, @RequestParam String voidReason, ModelMap map) {
         System.out.println("We can Delete stuff now!!");
         String redirectURI = request.getContextPath() + "/" + MRRTTemplateIndexController.INDEX_CONTROLLER;
-        MRRTTemplate mrrtTemplate = getService().getById(templateId);
-        mrrtTemplate = getService().delete(templateId);
+        MRRTTemplate mrrtTemplate = getService().retire(templateId,Context.getAuthenticatedUser(), new Date(),voidReason);
         logger.log(Level.INFO,"MRRT Template Unregistered : " + mrrtTemplate.getName());
         return new ModelAndView(new RedirectView(redirectURI));
 
