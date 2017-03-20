@@ -146,6 +146,7 @@ public class MRRTTemplateServiceImpl extends BaseOpenmrsService implements MRRTT
         template.setVoidedBy(voidedBy);
         template.setDateVoided(voidedOn);
         template.setVoidReason(voidReason);
+        saveOrUpdate(template);
         return template;
     }
 

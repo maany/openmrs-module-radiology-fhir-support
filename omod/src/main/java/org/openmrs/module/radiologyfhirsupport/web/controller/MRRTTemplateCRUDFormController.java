@@ -68,10 +68,9 @@ public class MRRTTemplateCRUDFormController {
 
     @RequestMapping(value = MRRTTemplateCRUDFormController.VIEW_EDIT_REQUEST_MAPPING + "/view/{templateId}.form", method = RequestMethod.DELETE)
     public ModelAndView deleteTemplate(HttpServletRequest request, @PathVariable Integer templateId, @RequestParam String voidReason, ModelMap map) {
-        System.out.println("We can Delete stuff now!!");
         String redirectURI = request.getContextPath() + "/" + MRRTTemplateIndexController.INDEX_CONTROLLER;
         MRRTTemplate mrrtTemplate = getService().retire(templateId,Context.getAuthenticatedUser(), new Date(),voidReason);
-        logger.log(Level.INFO,"MRRT Template Unregistered : " + mrrtTemplate.getName());
+        logger.log(Level.INFO,"MRRT Template Unregistered : " + mrrtTemplate.getName() + " Reason : " + voidReason);
         return new ModelAndView(new RedirectView(redirectURI));
 
     }
