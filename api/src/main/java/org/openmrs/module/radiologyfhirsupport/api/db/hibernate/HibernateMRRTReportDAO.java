@@ -7,6 +7,7 @@ import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.openmrs.Encounter;
 import org.openmrs.module.radiologyfhirsupport.MRRTReport;
+import org.openmrs.module.radiologyfhirsupport.MRRTTemplate;
 import org.openmrs.module.radiologyfhirsupport.api.db.MRRTReportDAO;
 
 import java.util.ArrayList;
@@ -81,6 +82,15 @@ public class HibernateMRRTReportDAO implements MRRTReportDAO {
     public List<MRRTReport> getAll() {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(MRRTReport.class);
         return criteria.list();
+    }
+
+    @Override
+    public List<MRRTReport> getByTemplate(MRRTTemplate template) {
+        String hql = "FROM org.openmrs.module.radiologyfhirsupport.MRRTReport M WHERE M.mrrtTemplate = :mrrtTemplate";
+        Query query = sessionFactory.getCurrentSession().createQuery(hql);
+        query.setParameter("mrrtTemplate", template);
+        List<MRRTReport> reports = query.list();
+        return reports;
     }
 
     @Override

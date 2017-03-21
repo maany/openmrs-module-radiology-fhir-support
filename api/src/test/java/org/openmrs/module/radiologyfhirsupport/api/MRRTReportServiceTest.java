@@ -93,6 +93,15 @@ public class MRRTReportServiceTest extends BaseModuleContextSensitiveTest {
         Assert.assertEquals(reports.size(),2);
     }
     @Test
+    public void getByTemplate_ShouldReturnAllReportsForAGivenTemplate(){
+        List<MRRTReport> reports = getService().getAll();
+        MRRTTemplate baseTemplate = reports.get(0).getMrrtTemplate();
+        reports = getService().getByTemplate(baseTemplate);
+        Assert.assertNotNull(reports);
+        Assert.assertNotEquals(reports.size(),0);
+
+    }
+    @Test
     public void deleteById_ShouldDeleteMRRTReport(){
         List<MRRTReport> reports = getService().getAll();
         int sizeInitial= reports.size();

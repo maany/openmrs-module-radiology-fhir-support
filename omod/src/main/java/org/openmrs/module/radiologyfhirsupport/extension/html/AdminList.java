@@ -46,6 +46,7 @@ public class AdminList extends AdministrationSectionExt {
 		LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
 //		map.put("/module/radiologyfhirsupport/manage.form", "radiologyfhirsupport.manage");
 		map.put("/module/radiologyfhirsupport/index.form", "radiologyfhirsupport.mrrt.manage.list");
+		map.put("/module/radiologyfhirsupport/manage.form", "radiologyfhirsupport.manage");
 		return map;
 	}
 	

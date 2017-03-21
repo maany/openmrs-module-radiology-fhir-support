@@ -15,6 +15,7 @@ package org.openmrs.module.radiologyfhirsupport.api;
 
 import org.openmrs.User;
 import org.openmrs.api.OpenmrsService;
+import org.openmrs.module.radiologyfhirsupport.MRRTReport;
 import org.openmrs.module.radiologyfhirsupport.MRRTTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -122,4 +123,10 @@ public interface MRRTTemplateService extends OpenmrsService {
      */
     MRRTTemplate retire(int templateId, User voidedBy, Date voidedOn, String voidReason);
 
+    /**
+     *
+     * @param templateId
+     * @return
+     */
+    List<MRRTReport> getReports(int templateId);
 }

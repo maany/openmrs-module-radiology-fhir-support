@@ -52,6 +52,11 @@ public class MRRTReportServiceImpl extends BaseOpenmrsService implements MRRTRep
     }
 
     @Override
+    public List<MRRTReport> getByTemplate(MRRTTemplate template) {
+        return dao.getByTemplate(template);
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public MRRTReport getByEncounterUUID(String encounterUUID) {
         return dao.getByEncounterUUID(encounterUUID);

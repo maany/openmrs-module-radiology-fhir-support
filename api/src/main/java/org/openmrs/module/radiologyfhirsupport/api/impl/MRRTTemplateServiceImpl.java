@@ -21,7 +21,9 @@ import org.openmrs.api.impl.BaseOpenmrsService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.messagesource.MessageSourceService;
+import org.openmrs.module.radiologyfhirsupport.MRRTReport;
 import org.openmrs.module.radiologyfhirsupport.MRRTTemplate;
+import org.openmrs.module.radiologyfhirsupport.api.MRRTReportService;
 import org.openmrs.module.radiologyfhirsupport.api.MRRTTemplateService;
 import org.openmrs.module.radiologyfhirsupport.api.db.MRRTTemplateDAO;
 import org.springframework.beans.factory.annotation.Value;
@@ -148,6 +150,12 @@ public class MRRTTemplateServiceImpl extends BaseOpenmrsService implements MRRTT
         template.setVoidReason(voidReason);
         saveOrUpdate(template);
         return template;
+    }
+
+    @Override
+    public List<MRRTReport> getReports(int templateId) {
+        MRRTReportService mrrtReportService = Context.getService(MRRTReportService.class);
+        return mrrtReportService.getByTemplate(getById(templateId));
     }
 
     /**

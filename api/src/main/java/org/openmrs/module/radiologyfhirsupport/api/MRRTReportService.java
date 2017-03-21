@@ -2,6 +2,7 @@ package org.openmrs.module.radiologyfhirsupport.api;
 
 import org.openmrs.Encounter;
 import org.openmrs.module.radiologyfhirsupport.MRRTReport;
+import org.openmrs.module.radiologyfhirsupport.MRRTTemplate;
 
 import java.util.List;
 
@@ -26,6 +27,12 @@ public interface MRRTReportService {
      */
     List<MRRTReport> getAll();
 
+    /**
+     *
+     * @param templateId
+     * @return
+     */
+    List<MRRTReport> getByTemplate(MRRTTemplate template);
     /**
      *
      * @param encounterUUID
